@@ -5,13 +5,14 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       fontFamily: {
         "press-start": ["var(--font-press-start)", "monospace"],
         vt323: ["var(--font-vt323)", "monospace"],
-        inter: ["Inter", "system-ui", "sans-serif"],
-        sora: ["Sora", "system-ui", "sans-serif"],
+        inter: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sora: ["var(--font-sora)", "system-ui", "sans-serif"],
         pixelify: ["var(--font-pixelify)", "sans-serif"],
         silkscreen: ["var(--font-silkscreen)", "monospace"],
       },
@@ -27,6 +28,18 @@ module.exports = {
         "hotdog-bun": "var(--hotdog-bun)",
         ketchup: "var(--ketchup)",
         mustard: "var(--mustard)",
+        // Abstract Green Colors
+        "abstract-green": "#03d26e",
+        "abstract-green-light": "#41f09c",
+        "abstract-green-dark": "#00c466",
+      },
+      backgroundImage: {
+        "abstract-green": "var(--abstract-green-gradient)",
+        "abstract-green-hover": "var(--abstract-green-gradient-hover)",
+        "hotdog-gradient":
+          "linear-gradient(135deg, var(--ketchup) 0%, var(--mustard) 50%, var(--hotdog-bun) 100%)",
+        "glass-pattern":
+          "radial-gradient(circle at 25% 25%, rgba(3, 210, 110, 0.1) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(65, 240, 156, 0.1) 0%, transparent 50%), radial-gradient(circle at 50% 10%, rgba(0, 196, 102, 0.1) 0%, transparent 50%)",
       },
       animation: {
         float: "float 6s ease-in-out infinite",
@@ -72,12 +85,6 @@ module.exports = {
           "0%, 100%": { opacity: "0", transform: "scale(0) rotate(0deg)" },
           "50%": { opacity: "1", transform: "scale(1) rotate(180deg)" },
         },
-      },
-      backgroundImage: {
-        "hotdog-gradient":
-          "linear-gradient(135deg, var(--ketchup) 0%, var(--mustard) 50%, var(--hotdog-bun) 100%)",
-        "glass-pattern":
-          "radial-gradient(circle at 25% 25%, rgba(255, 107, 53, 0.1) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(255, 217, 61, 0.1) 0%, transparent 50%), radial-gradient(circle at 50% 10%, rgba(255, 140, 66, 0.1) 0%, transparent 50%)",
       },
     },
   },
