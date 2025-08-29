@@ -228,7 +228,7 @@ export default function GuidePage() {
             <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl">
               <h3 className="text-xl font-bold text-foreground mb-4">Need More Help?</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Can't find what you're looking for? Our support team is here to help!
+                Can&apos;t find what you&apos;re looking for? Our support team is here to help!
               </p>
               <button className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105">
                 Contact Support

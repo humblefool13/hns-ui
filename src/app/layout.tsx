@@ -13,7 +13,7 @@ const bungeeShade = Bungee_Shade({
 }); 
 
 export const metadata: Metadata = {
-  title: "HotDog Name Service - Abstract's Spiciest Web3 Domain Registry",
+  title: "HotDog Name Service - Abstract\'s Spiciest Web3 Domain Registry",
   description: "Claim your hotdog name — fast, cheap, and fun web3 domains!",
 };
 

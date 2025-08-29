@@ -97,7 +97,7 @@ export default function SearchSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
           >
-            On Abstract, everything's fast, cheap, and fun. Claim your hotdog name — one sizzling identity for all your wallets, dApps, and community flexing.
+            On Abstract, everything&apos;s fast, cheap, and fun. Claim your hotdog name — one sizzling identity for all your wallets, dApps, and community flexing.
           </motion.p>
 
           {/* Search Section */}
