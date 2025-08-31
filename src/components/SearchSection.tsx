@@ -12,66 +12,174 @@ import {
   AlertCircle,
   ShoppingCart,
   Zap,
+  Wallet,
+  Loader2,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useContract } from "../contexts/ContractContext";
+import { useAbstractPrivyLogin } from "@abstract-foundation/agw-react/privy";
+import { formatEther } from "viem";
 
 export default function SearchSection() {
   const [domainName, setDomainName] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [selectedYears, setSelectedYears] = useState<number>(1);
+  const [currentPrice, setCurrentPrice] = useState<bigint | null>(null);
   const [result, setResult] = useState<null | {
     type: "found" | "not-found";
     domain: string;
+    tld: string;
+    name: string;
     owner?: string;
     expiration?: string;
+    price?: bigint;
     marketplaces?: { name: string; url: string; icon: string }[];
   }>(null);
-  const { getDomainPrice } = useContract();
 
-  // Real constraints and pricing (ETH)
-  const MAX_REGISTRATION_YEARS = 10;
-  const MIN_DOMAIN_LENGTH = 3;
-  const MAX_DOMAIN_LENGTH = 20;
-  const PRICE_3_CHAR = 0.012;
-  const PRICE_4_CHAR = 0.01;
-  const PRICE_5_CHAR = 0.008;
-  const PRICE_6_CHAR = 0.006;
-  const PRICE_7_PLUS = 0.004;
+  const {
+    getRegisteredTLDs,
+    resolveDomain,
+    getDomainPrice,
+    registerDomain,
+    isConnected,
+    address,
+    isLoading,
+    getNameServiceContract,
+  } = useContract();
+  const { login } = useAbstractPrivyLogin();
 
+  // State for TLDs and validation
+  const [availableTLDs, setAvailableTLDs] = useState<string[]>([]);
+  const [isLoadingTLDs, setIsLoadingTLDs] = useState(true);
+  const [validationError, setValidationError] = useState<string>("");
+
+  // Load available TLDs on component mount
+  useEffect(() => {
+    const loadTLDs = async () => {
+      try {
+        setIsLoadingTLDs(true);
+        const tlds = await getRegisteredTLDs();
+        setAvailableTLDs(tlds);
+      } catch (error) {
+        console.error("Error loading TLDs:", error);
+        setAvailableTLDs([]);
+      } finally {
+        setIsLoadingTLDs(false);
+      }
+    };
+
+    loadTLDs();
+  }, []);
+
+  // Parse domain input
   const parsed = useMemo(() => {
     const input = domainName.trim().toLowerCase();
-    if (!input) return "";
-    const label = input.includes(".") ? input.split(".")[0] : input;
-    return label.replace(/[^a-z0-9-]/g, "");
-  }, [domainName]);
+    if (!input) return { name: "", tld: "", isValid: false };
 
-  const nameLen = parsed.length;
-  const isTooShort = nameLen > 0 && nameLen < MIN_DOMAIN_LENGTH;
-  const isTooLong = nameLen > MAX_DOMAIN_LENGTH;
+    if (input.includes(".")) {
+      const parts = input.split(".");
+      if (parts.length === 2) {
+        const name = parts[0].replace(/[^a-zA-Z0-9]/g, "");
+        const tld = parts[1];
+        return { name, tld, isValid: name.length > 0 && tld.length > 0 };
+      }
+    }
 
-  const pricePerYearEth = useMemo(() => {
-    if (nameLen === 0) return 0;
-    if (nameLen === 3) return PRICE_3_CHAR;
-    if (nameLen === 4) return PRICE_4_CHAR;
-    if (nameLen === 5) return PRICE_5_CHAR;
-    if (nameLen === 6) return PRICE_6_CHAR;
-    if (nameLen >= 7) return PRICE_7_PLUS;
-    return 0;
-  }, [nameLen]);
+    // If no TLD specified, assume first available TLD
+    const name = input.replace(/[^a-zA-Z0-9]/g, "");
+    const tld = availableTLDs.length > 0 ? availableTLDs[0] : "";
+    return { name, tld, isValid: name.length > 0 && tld.length > 0 };
+  }, [domainName, availableTLDs]);
 
-  const handleSearch = () => {
-    if (!domainName.trim()) return;
-    if (isTooShort || isTooLong) return;
+  // Validation
+  const validation = useMemo(() => {
+    if (!parsed.isValid)
+      return { isValid: false, error: "Invalid domain format" };
+
+    const { name, tld } = parsed;
+
+    if (!availableTLDs.includes(tld)) {
+      return { isValid: false, error: `TLD "${tld}" is not supported` };
+    }
+
+    if (name.length < 3) {
+      return { isValid: false, error: "Name must be at least 3 characters" };
+    }
+
+    if (name.length > 20) {
+      return { isValid: false, error: "Name must be 20 characters or less" };
+    }
+
+    if (!/^[a-zA-Z0-9]+$/.test(name)) {
+      return {
+        isValid: false,
+        error: "Name can only contain letters and numbers",
+      };
+    }
+
+    if (name.startsWith(".") || name.endsWith(".")) {
+      return {
+        isValid: false,
+        error: "Name cannot start or end with a &apos;.&apos;",
+      };
+    }
+
+    return { isValid: true, error: "" };
+  }, [parsed, availableTLDs]);
+
+  // Update validation error
+  useEffect(() => {
+    setValidationError(validation.error);
+  }, [validation.error]);
+
+  // Update price when years change
+  useEffect(() => {
+    const updatePrice = async () => {
+      if (result && result.type === "not-found") {
+        try {
+          const price = await getDomainPrice(
+            result.name,
+            result.tld,
+            selectedYears
+          );
+          setCurrentPrice(price);
+        } catch (error) {
+          console.error("Error updating price:", error);
+          setCurrentPrice(null);
+        }
+      }
+    };
+
+    updatePrice();
+  }, [selectedYears, result, getDomainPrice]);
+
+  const handleSearch = async () => {
+    if (!validation.isValid) return;
 
     setIsSearching(true);
-    setTimeout(() => {
-      const found = Math.random() > 0.5;
-      if (found) {
+    setResult(null);
+    setCurrentPrice(null);
+
+    try {
+      const { name, tld } = parsed;
+      const domainInfo = await resolveDomain(name, tld);
+      // const tldContractAddress = domainInfo?.nftAddress;
+      // const tokenId = domainInfo?.tokenId;
+      if (
+        domainInfo &&
+        domainInfo.owner !== "0x0000000000000000000000000000000000000000" &&
+        Number(domainInfo.expiration) * 1000 > Date.now()
+      ) {
+        // Domain is taken
+        const expirationDate = new Date(Number(domainInfo.expiration) * 1000);
         setResult({
           type: "found",
-          domain: domainName,
-          owner: "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6",
-          expiration: "2026-12-15",
+          domain: `${name}.${tld}`,
+          tld,
+          name,
+          owner: domainInfo.owner,
+          expiration: expirationDate.toLocaleDateString(),
           marketplaces: [
             { name: "OpenSea", url: "https://opensea.io", icon: "🦄" },
             { name: "Magic Eden", url: "https://magiceden.io", icon: "✨" },
@@ -80,13 +188,63 @@ export default function SearchSection() {
           ],
         });
       } else {
-        setResult({ type: "not-found", domain: domainName });
+        // Domain is available
+        try {
+          const price = await getDomainPrice(name, tld, 1);
+          setResult({
+            type: "not-found",
+            domain: `${name}.${tld}`,
+            tld,
+            name,
+            price,
+          });
+          setCurrentPrice(price);
+        } catch (error) {
+          console.error("Error getting domain price:", error);
+          setResult({
+            type: "not-found",
+            domain: `${name}.${tld}`,
+            tld,
+            name,
+          });
+          setCurrentPrice(null);
+        }
       }
+    } catch (error) {
+      console.error("Error searching domain:", error);
+      setValidationError("Error searching domain. Please try again.");
+    } finally {
       setIsSearching(false);
-      // Scroll to results
-      const el = document.querySelector('[data-section="results"]');
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    }, 700);
+    }
+
+    // Scroll to results
+    const el = document.querySelector('[data-section="results"]');
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleConnectWallet = async () => {
+    try {
+      await login();
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+    }
+  };
+
+  const handleRegister = async () => {
+    if (!isConnected || !result || result.type !== "not-found" || isRegistering)
+      return;
+
+    setIsRegistering(true);
+    try {
+      await registerDomain(result.name, result.tld, selectedYears);
+      // Refresh the search to show the domain is now taken
+      await handleSearch();
+    } catch (error) {
+      console.error("Error registering domain:", error);
+      setValidationError("Failed to register domain. Please try again.");
+    } finally {
+      setIsRegistering(false);
+    }
   };
 
   return (
@@ -121,6 +279,30 @@ export default function SearchSection() {
             community flexing.
           </motion.p>
 
+          {/* Available TLDs */}
+          {!isLoadingTLDs && availableTLDs.length > 0 && (
+            <motion.div
+              className="mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                Available TLDs:
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {availableTLDs.map((tld) => (
+                  <span
+                    key={tld}
+                    className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium"
+                  >
+                    .{tld}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
           {/* Search Section */}
           <motion.div
             className="relative max-w-2xl mx-auto mb-8"
@@ -135,7 +317,7 @@ export default function SearchSection() {
               />
               <input
                 type="text"
-                placeholder="Search for a name like vind.hotdog"
+                placeholder="Search for a name like sausage.hotdogs"
                 value={domainName}
                 onChange={(e) => setDomainName(e.target.value)}
                 className="relative w-full px-16 py-6 text-xl font-inter bg-background border-2 border-gray-200 dark:border-gray-600 rounded-3xl text-foreground placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-green-300 focus:border-green-400 transition-all duration-300 shadow-lg"
@@ -150,13 +332,23 @@ export default function SearchSection() {
             <motion.button
               className="abstract-green-gradient mt-6 px-12 py-4 text-xl font-inter text-white shadow-lg relative overflow-hidden rounded-2xl disabled:opacity-60"
               disabled={
-                !domainName.trim() || isTooShort || isTooLong || isSearching
+                !domainName.trim() ||
+                !validation.isValid ||
+                isSearching ||
+                isLoading
               }
               whileHover={{ scale: isSearching ? 1 : 1.05 }}
               whileTap={{ scale: isSearching ? 1 : 0.95 }}
               onClick={handleSearch}
             >
-              {isSearching ? "Searching…" : "Check Availability"}
+              {isSearching ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" size={20} />
+                  Searching…
+                </>
+              ) : (
+                "Check Availability"
+              )}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                 animate={{ x: [-250, 250] }}
@@ -164,18 +356,18 @@ export default function SearchSection() {
               />
             </motion.button>
 
-            {(isTooShort || isTooLong) && (
+            {validationError && (
               <p className="mt-3 text-sm text-red-600 dark:text-red-400">
-                Name must be {MIN_DOMAIN_LENGTH}-{MAX_DOMAIN_LENGTH} characters.
+                {validationError}
               </p>
             )}
-            {!isTooShort && !isTooLong && nameLen > 0 && (
+
+            {!validationError && parsed.name && parsed.tld && (
               <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-                Estimated price:{" "}
-                <span className="font-semibold">
-                  {pricePerYearEth.toFixed(3)} ETH
-                </span>{" "}
-                per year
+                Searching:{" "}
+                <span className="font-mono font-semibold">
+                  {parsed.name}.{parsed.tld}
+                </span>
               </p>
             )}
           </motion.div>
@@ -235,18 +427,6 @@ export default function SearchSection() {
                       </div>
                       <p className="text-gray-600 dark:text-gray-300">
                         {result.expiration}
-                      </p>
-                    </div>
-
-                    <div className="p-6 border border-white/10 rounded-xl">
-                      <div className="flex items-center gap-3 mb-2">
-                        <DollarSign className="text-green-500" size={18} />
-                        <h3 className="font-semibold text-foreground">
-                          Registration Cost
-                        </h3>
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        {pricePerYearEth.toFixed(3)} ETH / year (by length)
                       </p>
                     </div>
 
@@ -314,16 +494,19 @@ export default function SearchSection() {
                         </h3>
                       </div>
                       <div className="grid grid-cols-3 gap-3">
-                        {[1, 2, 3, 5, 10]
-                          .filter((y) => y <= MAX_REGISTRATION_YEARS)
-                          .map((year) => (
-                            <button
-                              key={year}
-                              className="p-3 rounded-xl border-2 text-sm hover:border-green-400 transition-all"
-                            >
-                              {year} {year === 1 ? "Year" : "Years"}
-                            </button>
-                          ))}
+                        {[1, 2, 3, 5, 10].map((year) => (
+                          <button
+                            key={year}
+                            onClick={() => setSelectedYears(year)}
+                            className={`p-3 rounded-xl border-2 text-sm transition-all ${
+                              selectedYears === year
+                                ? "border-green-400 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                                : "border-gray-200 dark:border-gray-600 hover:border-green-400"
+                            }`}
+                          >
+                            {year} {year === 1 ? "Year" : "Years"}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
@@ -336,24 +519,48 @@ export default function SearchSection() {
                       </div>
                       <div className="text-center">
                         <div className="text-3xl font-bold text-green-500 mb-1">
-                          {pricePerYearEth.toFixed(3)} ETH / year
+                          {currentPrice ? formatEther(currentPrice) : "..."} ETH
                         </div>
                         <p className="text-gray-600 dark:text-gray-300">
-                          Pricing based on name length
+                          for {selectedYears}{" "}
+                          {selectedYears === 1 ? "year" : "years"}
                         </p>
                       </div>
                     </div>
                   </div>
 
                   <div className="text-center">
-                    <motion.button
-                      className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-10 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105 shadow-lg inline-flex items-center gap-2"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Zap size={20} />
-                      Mint {result.domain}
-                    </motion.button>
+                    {!isConnected ? (
+                      <motion.button
+                        onClick={handleConnectWallet}
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-10 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105 shadow-lg inline-flex items-center gap-2"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Wallet size={20} />
+                        Connect Wallet to Register
+                      </motion.button>
+                    ) : (
+                      <motion.button
+                        onClick={handleRegister}
+                        disabled={isRegistering}
+                        className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-10 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105 shadow-lg inline-flex items-center gap-2 disabled:opacity-60"
+                        whileHover={{ scale: isRegistering ? 1 : 1.05 }}
+                        whileTap={{ scale: isRegistering ? 1 : 0.95 }}
+                      >
+                        {isRegistering ? (
+                          <>
+                            <Loader2 className="animate-spin mr-2" size={20} />
+                            Registering...
+                          </>
+                        ) : (
+                          <>
+                            <Zap size={20} />
+                            Register {result.domain}
+                          </>
+                        )}
+                      </motion.button>
+                    )}
                   </div>
                 </div>
               )}
