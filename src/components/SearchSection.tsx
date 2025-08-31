@@ -1,13 +1,32 @@
-'use client';
+"use client";
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Sparkles, Crown, Calendar, DollarSign, ExternalLink, CheckCircle, AlertCircle, ShoppingCart, Zap } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Search,
+  Sparkles,
+  Crown,
+  Calendar,
+  DollarSign,
+  ExternalLink,
+  CheckCircle,
+  AlertCircle,
+  ShoppingCart,
+  Zap,
+} from "lucide-react";
+import { useMemo, useState } from "react";
+import { useContract } from "../contexts/ContractContext";
 
 export default function SearchSection() {
-  const [domainName, setDomainName] = useState('');
+  const [domainName, setDomainName] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [result, setResult] = useState<null | { type: 'found' | 'not-found'; domain: string; owner?: string; expiration?: string; marketplaces?: { name: string; url: string; icon: string }[] }>(null);
+  const [result, setResult] = useState<null | {
+    type: "found" | "not-found";
+    domain: string;
+    owner?: string;
+    expiration?: string;
+    marketplaces?: { name: string; url: string; icon: string }[];
+  }>(null);
+  const { getDomainPrice } = useContract();
 
   // Real constraints and pricing (ETH)
   const MAX_REGISTRATION_YEARS = 10;
@@ -21,9 +40,9 @@ export default function SearchSection() {
 
   const parsed = useMemo(() => {
     const input = domainName.trim().toLowerCase();
-    if (!input) return '';
-    const label = input.includes('.') ? input.split('.')[0] : input;
-    return label.replace(/[^a-z0-9-]/g, '');
+    if (!input) return "";
+    const label = input.includes(".") ? input.split(".")[0] : input;
+    return label.replace(/[^a-z0-9-]/g, "");
   }, [domainName]);
 
   const nameLen = parsed.length;
@@ -49,24 +68,24 @@ export default function SearchSection() {
       const found = Math.random() > 0.5;
       if (found) {
         setResult({
-          type: 'found',
+          type: "found",
           domain: domainName,
-          owner: '0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6',
-          expiration: '2026-12-15',
+          owner: "0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6",
+          expiration: "2026-12-15",
           marketplaces: [
-            { name: 'OpenSea', url: 'https://opensea.io', icon: '🦄' },
-            { name: 'Magic Eden', url: 'https://magiceden.io', icon: '✨' },
-            { name: 'ZKMarket', url: 'https://zkmarket.io', icon: '🔒' },
-            { name: 'Mintify', url: 'https://mintify.xyz', icon: '🎨' }
-          ]
+            { name: "OpenSea", url: "https://opensea.io", icon: "🦄" },
+            { name: "Magic Eden", url: "https://magiceden.io", icon: "✨" },
+            { name: "ZKMarket", url: "https://zkmarket.io", icon: "🔒" },
+            { name: "Mintify", url: "https://mintify.xyz", icon: "🎨" },
+          ],
         });
       } else {
-        setResult({ type: 'not-found', domain: domainName });
+        setResult({ type: "not-found", domain: domainName });
       }
       setIsSearching(false);
       // Scroll to results
       const el = document.querySelector('[data-section="results"]');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      if (el) el.scrollIntoView({ behavior: "smooth" });
     }, 700);
   };
 
@@ -78,14 +97,14 @@ export default function SearchSection() {
           className="glass-card rounded-2xl p-12 text-center mb-12"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
           {/* Main Heading */}
           <motion.h1
             className="text-5xl md:text-7xl font-inter mb-6 text-foreground drop-shadow-lg transition-colors duration-300"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
             Your Web3 Name, HotDog-Style
           </motion.h1>
@@ -95,9 +114,11 @@ export default function SearchSection() {
             className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-inter mb-12 max-w-3xl mx-auto font-medium leading-relaxed transition-colors duration-300"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           >
-            On Abstract, everything&apos;s fast, cheap, and fun. Claim your hotdog name — one sizzling identity for all your wallets, dApps, and community flexing.
+            On Abstract, everything&apos;s fast, cheap, and fun. Claim your
+            hotdog name — one sizzling identity for all your wallets, dApps, and
+            community flexing.
           </motion.p>
 
           {/* Search Section */}
@@ -105,33 +126,41 @@ export default function SearchSection() {
             className="relative max-w-2xl mx-auto mb-8"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
+            transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
           >
             <div className="relative">
-              <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 z-10 transition-colors duration-300" size={24} />
+              <Search
+                className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 z-10 transition-colors duration-300"
+                size={24}
+              />
               <input
                 type="text"
                 placeholder="Search for a name like vind.hotdog"
                 value={domainName}
                 onChange={(e) => setDomainName(e.target.value)}
                 className="relative w-full px-16 py-6 text-xl font-inter bg-background border-2 border-gray-200 dark:border-gray-600 rounded-3xl text-foreground placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-green-300 focus:border-green-400 transition-all duration-300 shadow-lg"
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
-              <Sparkles className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 z-10 transition-colors duration-300" size={24} />
+              <Sparkles
+                className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 z-10 transition-colors duration-300"
+                size={24}
+              />
             </div>
-            
+
             <motion.button
               className="abstract-green-gradient mt-6 px-12 py-4 text-xl font-inter text-white shadow-lg relative overflow-hidden rounded-2xl disabled:opacity-60"
-              disabled={!domainName.trim() || isTooShort || isTooLong || isSearching}
+              disabled={
+                !domainName.trim() || isTooShort || isTooLong || isSearching
+              }
               whileHover={{ scale: isSearching ? 1 : 1.05 }}
               whileTap={{ scale: isSearching ? 1 : 0.95 }}
               onClick={handleSearch}
             >
-              {isSearching ? 'Searching…' : 'Check Availability'}
+              {isSearching ? "Searching…" : "Check Availability"}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                 animate={{ x: [-250, 250] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
               />
             </motion.button>
 
@@ -142,7 +171,11 @@ export default function SearchSection() {
             )}
             {!isTooShort && !isTooLong && nameLen > 0 && (
               <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-                Estimated price: <span className="font-semibold">{pricePerYearEth.toFixed(3)} ETH</span> per year
+                Estimated price:{" "}
+                <span className="font-semibold">
+                  {pricePerYearEth.toFixed(3)} ETH
+                </span>{" "}
+                per year
               </p>
             )}
           </motion.div>
@@ -160,7 +193,7 @@ export default function SearchSection() {
               transition={{ duration: 0.4 }}
               className="max-w-4xl mx-auto"
             >
-              {result.type === 'found' ? (
+              {result.type === "found" ? (
                 <div className="glass-card p-8 rounded-2xl border border-white/10">
                   <div className="text-center mb-6">
                     <motion.div
@@ -171,9 +204,14 @@ export default function SearchSection() {
                     >
                       <AlertCircle className="text-red-500" size={32} />
                     </motion.div>
-                    <h2 className="text-2xl font-bold text-foreground mb-1">Domain Already Taken</h2>
+                    <h2 className="text-2xl font-bold text-foreground mb-1">
+                      Domain Already Taken
+                    </h2>
                     <p className="text-gray-600 dark:text-gray-300">
-                      <span className="font-mono text-green-500">{result.domain}</span> is already registered
+                      <span className="font-mono text-green-500">
+                        {result.domain}
+                      </span>{" "}
+                      is already registered
                     </p>
                   </div>
 
@@ -183,29 +221,41 @@ export default function SearchSection() {
                         <Crown className="text-yellow-500" size={18} />
                         <h3 className="font-semibold text-foreground">Owner</h3>
                       </div>
-                      <p className="font-mono text-sm text-gray-600 dark:text-gray-300 break-all">{result.owner}</p>
+                      <p className="font-mono text-sm text-gray-600 dark:text-gray-300 break-all">
+                        {result.owner}
+                      </p>
                     </div>
 
                     <div className="p-6 border border-white/10 rounded-xl">
                       <div className="flex items-center gap-3 mb-2">
                         <Calendar className="text-blue-500" size={18} />
-                        <h3 className="font-semibold text-foreground">Expires</h3>
+                        <h3 className="font-semibold text-foreground">
+                          Expires
+                        </h3>
                       </div>
-                      <p className="text-gray-600 dark:text-gray-300">{result.expiration}</p>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        {result.expiration}
+                      </p>
                     </div>
 
                     <div className="p-6 border border-white/10 rounded-xl">
                       <div className="flex items-center gap-3 mb-2">
                         <DollarSign className="text-green-500" size={18} />
-                        <h3 className="font-semibold text-foreground">Registration Cost</h3>
+                        <h3 className="font-semibold text-foreground">
+                          Registration Cost
+                        </h3>
                       </div>
-                      <p className="text-gray-600 dark:text-gray-300">{pricePerYearEth.toFixed(3)} ETH / year (by length)</p>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        {pricePerYearEth.toFixed(3)} ETH / year (by length)
+                      </p>
                     </div>
 
                     <div className="p-6 border border-white/10 rounded-xl">
                       <div className="flex items-center gap-3 mb-2">
                         <ShoppingCart className="text-purple-500" size={18} />
-                        <h3 className="font-semibold text-foreground">Available On</h3>
+                        <h3 className="font-semibold text-foreground">
+                          Available On
+                        </h3>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {result.marketplaces?.map((mkt, idx) => (
@@ -219,7 +269,10 @@ export default function SearchSection() {
                             whileTap={{ scale: 0.95 }}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.2, delay: 0.2 + idx * 0.05 }}
+                            transition={{
+                              duration: 0.2,
+                              delay: 0.2 + idx * 0.05,
+                            }}
                           >
                             <span>{mkt.icon}</span>
                             {mkt.name}
@@ -241,9 +294,14 @@ export default function SearchSection() {
                     >
                       <CheckCircle className="text-green-500" size={32} />
                     </motion.div>
-                    <h2 className="text-2xl font-bold text-foreground mb-1">Domain Available!</h2>
+                    <h2 className="text-2xl font-bold text-foreground mb-1">
+                      Domain Available!
+                    </h2>
                     <p className="text-gray-600 dark:text-gray-300">
-                      <span className="font-mono text-green-500">{result.domain}</span> is ready to be claimed
+                      <span className="font-mono text-green-500">
+                        {result.domain}
+                      </span>{" "}
+                      is ready to be claimed
                     </p>
                   </div>
 
@@ -251,27 +309,38 @@ export default function SearchSection() {
                     <div className="p-6 border border-white/10 rounded-xl">
                       <div className="flex items-center gap-3 mb-3">
                         <Calendar className="text-blue-500" size={18} />
-                        <h3 className="font-semibold text-foreground">Registration Period</h3>
+                        <h3 className="font-semibold text-foreground">
+                          Registration Period
+                        </h3>
                       </div>
                       <div className="grid grid-cols-3 gap-3">
-                        {[1,2,3,5,10].filter((y) => y <= MAX_REGISTRATION_YEARS).map((year) => (
-                          <button key={year} className="p-3 rounded-xl border-2 text-sm hover:border-green-400 transition-all">
-                            {year} {year === 1 ? 'Year' : 'Years'}
-                          </button>
-                        ))}
+                        {[1, 2, 3, 5, 10]
+                          .filter((y) => y <= MAX_REGISTRATION_YEARS)
+                          .map((year) => (
+                            <button
+                              key={year}
+                              className="p-3 rounded-xl border-2 text-sm hover:border-green-400 transition-all"
+                            >
+                              {year} {year === 1 ? "Year" : "Years"}
+                            </button>
+                          ))}
                       </div>
                     </div>
 
                     <div className="p-6 border border-white/10 rounded-xl">
                       <div className="flex items-center gap-3 mb-3">
                         <DollarSign className="text-green-500" size={18} />
-                        <h3 className="font-semibold text-foreground">Estimated Cost</h3>
+                        <h3 className="font-semibold text-foreground">
+                          Estimated Cost
+                        </h3>
                       </div>
                       <div className="text-center">
                         <div className="text-3xl font-bold text-green-500 mb-1">
                           {pricePerYearEth.toFixed(3)} ETH / year
                         </div>
-                        <p className="text-gray-600 dark:text-gray-300">Pricing based on name length</p>
+                        <p className="text-gray-600 dark:text-gray-300">
+                          Pricing based on name length
+                        </p>
                       </div>
                     </div>
                   </div>

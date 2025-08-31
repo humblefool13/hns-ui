@@ -1,7 +1,17 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, Clock, User, Calendar, RefreshCw, Star, Zap, Shield } from 'lucide-react';
+import { motion } from "framer-motion";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  User,
+  Calendar,
+  RefreshCw,
+  Star,
+  Zap,
+  Shield,
+} from "lucide-react";
 
 export default function DomainResults() {
   // Mock data for demonstration
@@ -9,19 +19,19 @@ export default function DomainResults() {
     {
       name: "vind.hotdog",
       available: true,
-      price: "0.01 ETH"
+      price: "0.01 ETH",
     },
     {
       name: "crypto.hotdog",
       available: false,
       owner: "0x1234...5678",
-      expiration: "2025-12-31"
+      expiration: "2025-12-31",
     },
     {
       name: "web3.hotdog",
       available: true,
-      price: "0.02 ETH"
-    }
+      price: "0.02 ETH",
+    },
   ];
 
   return (
@@ -68,12 +78,16 @@ export default function DomainResults() {
                     {result.available ? (
                       <div className="flex items-center space-x-3 text-green-600">
                         <CheckCircle size={24} className="text-green-500" />
-                        <span className="font-inter font-semibold text-lg">Available!</span>
+                        <span className="font-inter font-semibold text-lg">
+                          Available!
+                        </span>
                       </div>
                     ) : (
                       <div className="flex items-center space-x-3 text-red-600">
                         <XCircle size={24} className="text-red-500" />
-                        <span className="font-inter font-semibold text-lg">Taken</span>
+                        <span className="font-inter font-semibold text-lg">
+                          Taken
+                        </span>
                       </div>
                     )}
                   </div>
@@ -90,11 +104,17 @@ export default function DomainResults() {
                       >
                         <Star size={20} />
                         <span>Mint Domain</span>
-                        <span className="text-sm opacity-90">({result.price})</span>
+                        <span className="text-sm opacity-90">
+                          ({result.price})
+                        </span>
                         <motion.div
                           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                           animate={{ x: [-100, 100] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
                         />
                       </motion.button>
                       <motion.button
@@ -135,7 +155,9 @@ export default function DomainResults() {
             <div className="w-12 h-12 abstract-green-gradient rounded-xl flex items-center justify-center mx-auto mb-4">
               <Zap size={24} className="text-white" />
             </div>
-            <h4 className="text-lg font-inter mb-2 text-foreground transition-colors duration-300">Instant Resolution</h4>
+            <h4 className="text-lg font-inter mb-2 text-foreground transition-colors duration-300">
+              Instant Resolution
+            </h4>
             <p className="text-sm text-gray-600 dark:text-gray-300 font-inter leading-relaxed transition-colors duration-300">
               Abstract chain provides lightning-fast domain resolution
             </p>
@@ -150,7 +172,9 @@ export default function DomainResults() {
             <div className="w-12 h-12 abstract-green-gradient rounded-xl flex items-center justify-center mx-auto mb-4">
               <Shield size={24} className="text-white" />
             </div>
-            <h4 className="text-lg font-inter mb-2 text-foreground transition-colors duration-300">Secure Ownership</h4>
+            <h4 className="text-lg font-inter mb-2 text-foreground transition-colors duration-300">
+              Secure Ownership
+            </h4>
             <p className="text-sm text-gray-600 dark:text-gray-300 font-inter leading-relaxed transition-colors duration-300">
               Your domains are cryptographically secured on-chain
             </p>
@@ -165,7 +189,9 @@ export default function DomainResults() {
             <div className="w-12 h-12 abstract-green-gradient rounded-xl flex items-center justify-center mx-auto mb-4">
               <Star size={24} className="text-white" />
             </div>
-            <h4 className="text-lg font-inter mb-2 text-foreground transition-colors duration-300">Easy Management</h4>
+            <h4 className="text-lg font-inter mb-2 text-foreground transition-colors duration-300">
+              Easy Management
+            </h4>
             <p className="text-sm text-gray-600 dark:text-gray-300 font-inter leading-relaxed transition-colors duration-300">
               Simple interface for managing all your hotdog domains
             </p>

@@ -1,30 +1,30 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import SearchSection from '../components/SearchSection';
-import ManagePage from '../components/ManagePage';
-import ActivityPage from '../components/ActivityPage';
-import GuidePage from '../components/GuidePage';
-import DocsPage from '../components/DocsPage';
-import Navbar from '../components/Navbar';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import SearchSection from "../components/SearchSection";
+import ManagePage from "../components/ManagePage";
+import ActivityPage from "../components/ActivityPage";
+import GuidePage from "../components/GuidePage";
+import DocsPage from "../components/DocsPage";
+import Navbar from "../components/Navbar";
 
-type PageType = 'search' | 'manage' | 'activity' | 'guide' | 'docs';
+type PageType = "search" | "manage" | "activity" | "guide" | "docs";
 
 export default function HomePage() {
-  const [currentPage, setCurrentPage] = useState<PageType>('search');
+  const [currentPage, setCurrentPage] = useState<PageType>("search");
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'search':
+      case "search":
         return <SearchSection />;
-      case 'manage':
+      case "manage":
         return <ManagePage />;
-      case 'activity':
+      case "activity":
         return <ActivityPage />;
-      case 'guide':
+      case "guide":
         return <GuidePage />;
-      case 'docs':
+      case "docs":
         return <DocsPage />;
       default:
         return <SearchSection />;
