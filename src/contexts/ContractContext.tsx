@@ -5,10 +5,11 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useMemo,
   ReactNode,
 } from "react";
 import { getContract, type Address } from "viem";
-import { usePrivy } from "@privy-io/react-auth";
+import { useAccount } from "wagmi";
 import { useAbstractClient } from "@abstract-foundation/agw-react";
 
 // Import contract ABIs
@@ -16,7 +17,7 @@ import HNSManagerABI from "../../contracts/HNSManager.json";
 import NameServiceABI from "../../contracts/NameService.json";
 
 // Contract addresses (you can make these configurable)
-const HNS_MANAGER_ADDRESS = "0x0000000000000000000000000000000000000000"; // Replace with actual address
+const HNS_MANAGER_ADDRESS = "0xc8d700ba82ec3ea353821c0cb087725aeb585560";
 
 // Types for contract interactions
 export interface DomainInfo {
@@ -46,7 +47,7 @@ export interface ContractContextType {
   registerDomain: (name: string, tld: string, years: number) => Promise<void>;
   renewDomain: (name: string, tld: string, years: number) => Promise<void>;
   transferDomain: (name: string, tld: string, to: Address) => Promise<void>;
-  getDomainPrice: (name: string, tld: string, years: number) => Promise<bigint>;
+  getDomainPrice: (name: string, years: number) => Promise<number>;
   getDomainExpiration: (name: string, tld: string) => Promise<bigint>;
 
   // Utility functions
@@ -77,18 +78,18 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [nameServiceContracts] = useState<Map<string, any>>(new Map());
-
-  const { user, authenticated } = usePrivy();
+  const { address, isConnected } = useAccount();
   const { data: abstractClient } = useAbstractClient();
 
-  // Create HNS Manager contract instance
-  const hnsManagerContract = abstractClient
-    ? getContract({
-        address: HNS_MANAGER_ADDRESS as Address,
-        abi: HNSManagerABI.abi,
-        client: abstractClient,
-      })
-    : null;
+  const hnsManagerContract = useMemo(() => {
+    if (!abstractClient) return null;
+
+    return getContract({
+      address: HNS_MANAGER_ADDRESS as Address,
+      abi: HNSManagerABI.abi,
+      client: abstractClient,
+    });
+  }, [abstractClient]);
 
   // Get or create NameService contract instance for a specific TLD
   const getNameServiceContract = (tld: string) => {
@@ -239,7 +240,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       const contract = getNameServiceContract(tld);
       if (!contract)
         throw new Error("Name service contract not initialized for " + tld);
-      const price = await contract.read.getPrice([name, BigInt(years)]);
+      const price = getDomainPrice(name, years);
       await contract.write.register([name, BigInt(years)], {
         value: price,
       });
@@ -258,7 +259,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       const contract = getNameServiceContract(tld);
       if (!contract)
         throw new Error("Name service contract not initialized for " + tld);
-      const price = await contract.read.getPrice([name, BigInt(years)]);
+      const price = getDomainPrice(name, years);
 
       await contract.write.renew([name, BigInt(years)], {
         value: price,
@@ -287,14 +288,20 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
 
   const getDomainPrice = async (
     name: string,
-    tld: string,
     years: number
-  ): Promise<bigint> => {
+  ): Promise<number> => {
     try {
-      const contract = getNameServiceContract(tld);
-      if (!contract)
-        throw new Error("Name service contract not initialized for " + tld);
-      return await contract.read.getPrice([name, BigInt(years)]);
+      if (name.length === 3) {
+        return 0.012 * years;
+      } else if (name.length === 4) {
+        return 0.01 * years;
+      } else if (name.length === 5) {
+        return 0.008 * years;
+      } else if (name.length === 6) {
+        return 0.006 * years;
+      } else {
+        return 0.004 * years;
+      }
     } catch (err) {
       console.error("Error getting domain price:", err);
       throw err;
@@ -340,9 +347,9 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     if (abstractClient && hnsManagerContract) {
       initializeContracts();
     } else if (!abstractClient) {
-      setIsLoading(false);
+      setIsLoading(true);
     }
-  }, [abstractClient, hnsManagerContract]);
+  }, [abstractClient]);
 
   const contextValue: ContractContextType = {
     hnsManagerContract,
@@ -360,8 +367,8 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     getDomainPrice,
     getDomainExpiration,
     getNameServiceContract,
-    isConnected: authenticated,
-    address: user?.wallet?.address as Address | undefined,
+    isConnected,
+    address,
   };
 
   return (
