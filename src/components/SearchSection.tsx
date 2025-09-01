@@ -18,14 +18,13 @@ import {
 import { useMemo, useState, useEffect } from "react";
 import { useContract } from "../contexts/ContractContext";
 import { useAbstractPrivyLogin } from "@abstract-foundation/agw-react/privy";
-import { formatEther } from "viem";
 
 export default function SearchSection() {
   const [domainName, setDomainName] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [selectedYears, setSelectedYears] = useState<number>(1);
-  const [currentPrice, setCurrentPrice] = useState<bigint | null>(null);
+  const [currentPrice, setCurrentPrice] = useState<number | null>(null);
   const [result, setResult] = useState<null | {
     type: "found" | "not-found";
     domain: string;
@@ -33,7 +32,7 @@ export default function SearchSection() {
     name: string;
     owner?: string;
     expiration?: string;
-    price?: bigint;
+    price?: number;
     marketplaces?: { name: string; url: string; icon: string }[];
   }>(null);
 
@@ -43,9 +42,7 @@ export default function SearchSection() {
     getDomainPrice,
     registerDomain,
     isConnected,
-    address,
     isLoading,
-    getNameServiceContract,
   } = useContract();
   const { login } = useAbstractPrivyLogin();
 
@@ -69,8 +66,8 @@ export default function SearchSection() {
       }
     };
 
-    loadTLDs();
-  }, []);
+    if (!isLoading && isConnected) loadTLDs();
+  }, [isLoading, getRegisteredTLDs]);
 
   // Parse domain input
   const parsed = useMemo(() => {
@@ -138,11 +135,7 @@ export default function SearchSection() {
     const updatePrice = async () => {
       if (result && result.type === "not-found") {
         try {
-          const price = await getDomainPrice(
-            result.name,
-            result.tld,
-            selectedYears
-          );
+          const price = await getDomainPrice(result.name, selectedYears);
           setCurrentPrice(price);
         } catch (error) {
           console.error("Error updating price:", error);
@@ -164,8 +157,6 @@ export default function SearchSection() {
     try {
       const { name, tld } = parsed;
       const domainInfo = await resolveDomain(name, tld);
-      // const tldContractAddress = domainInfo?.nftAddress;
-      // const tokenId = domainInfo?.tokenId;
       if (
         domainInfo &&
         domainInfo.owner !== "0x0000000000000000000000000000000000000000" &&
@@ -181,16 +172,32 @@ export default function SearchSection() {
           owner: domainInfo.owner,
           expiration: expirationDate.toLocaleDateString(),
           marketplaces: [
-            { name: "OpenSea", url: "https://opensea.io", icon: "🦄" },
-            { name: "Magic Eden", url: "https://magiceden.io", icon: "✨" },
-            { name: "ZKMarket", url: "https://zkmarket.io", icon: "🔒" },
-            { name: "Mintify", url: "https://mintify.xyz", icon: "🎨" },
+            {
+              name: "OpenSea",
+              url: `https://opensea.io/item/abstract/${domainInfo.nftAddress}/${domainInfo.tokenId}`,
+              icon: "🦄",
+            },
+            {
+              name: "Magic Eden",
+              url: `https://magiceden.io/item-details/abstract/${domainInfo.nftAddress}/${domainInfo.tokenId}`,
+              icon: "✨",
+            },
+            {
+              name: "ZKMarket",
+              url: `https://www.zkmarkets.com/abstract/collections/${domainInfo.nftAddress}/nfts/${domainInfo.tokenId}`,
+              icon: "🔒",
+            },
+            {
+              name: "Mintify",
+              url: `https://app.mintify.com/nft/abstract/${domainInfo.nftAddress}/${domainInfo.tokenId}`,
+              icon: "🎨",
+            },
           ],
         });
       } else {
         // Domain is available
         try {
-          const price = await getDomainPrice(name, tld, 1);
+          const price = await getDomainPrice(name, 1);
           setResult({
             type: "not-found",
             domain: `${name}.${tld}`,
@@ -519,7 +526,7 @@ export default function SearchSection() {
                       </div>
                       <div className="text-center">
                         <div className="text-3xl font-bold text-green-500 mb-1">
-                          {currentPrice ? formatEther(currentPrice) : "..."} ETH
+                          {currentPrice ? currentPrice : "..."} ETH
                         </div>
                         <p className="text-gray-600 dark:text-gray-300">
                           for {selectedYears}{" "}
