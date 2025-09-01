@@ -44,7 +44,7 @@ export default function SearchSection() {
     isConnected,
     isLoading,
   } = useContract();
-  const { login } = useAbstractPrivyLogin();
+  const { login, link } = useAbstractPrivyLogin();
 
   // State for TLDs and validation
   const [availableTLDs, setAvailableTLDs] = useState<string[]>([]);
@@ -135,7 +135,7 @@ export default function SearchSection() {
     const updatePrice = async () => {
       if (result && result.type === "not-found") {
         try {
-          const price = await getDomainPrice(result.name, selectedYears);
+          const price = getDomainPrice(result.name, selectedYears);
           setCurrentPrice(price);
         } catch (error) {
           console.error("Error updating price:", error);
@@ -197,7 +197,7 @@ export default function SearchSection() {
       } else {
         // Domain is available
         try {
-          const price = await getDomainPrice(name, 1);
+          const price = getDomainPrice(name, 1);
           setResult({
             type: "not-found",
             domain: `${name}.${tld}`,
@@ -233,7 +233,12 @@ export default function SearchSection() {
     try {
       await login();
     } catch (error) {
-      console.error("Failed to connect wallet:", error);
+      if ((error as Error).message.includes("already logged in")) {
+        await link();
+        window.location.reload();
+      } else {
+        console.error("Failed to connect wallet:", error);
+      }
     }
   };
 
