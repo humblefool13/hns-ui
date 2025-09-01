@@ -8,7 +8,7 @@ import React, {
   useMemo,
   ReactNode,
 } from "react";
-import { getContract, type Address } from "viem";
+import { getContract, type Address, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useAbstractClient } from "@abstract-foundation/agw-react";
 
@@ -47,7 +47,7 @@ export interface ContractContextType {
   registerDomain: (name: string, tld: string, years: number) => Promise<void>;
   renewDomain: (name: string, tld: string, years: number) => Promise<void>;
   transferDomain: (name: string, tld: string, to: Address) => Promise<void>;
-  getDomainPrice: (name: string, years: number) => Promise<number>;
+  getDomainPrice: (name: string, years: number) => number;
   getDomainExpiration: (name: string, tld: string) => Promise<bigint>;
 
   // Utility functions
@@ -242,7 +242,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
         throw new Error("Name service contract not initialized for " + tld);
       const price = getDomainPrice(name, years);
       await contract.write.register([name, BigInt(years)], {
-        value: price,
+        value: parseEther(price.toString()),
       });
     } catch (err) {
       console.error("Error registering domain:", err);
@@ -260,9 +260,8 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       if (!contract)
         throw new Error("Name service contract not initialized for " + tld);
       const price = getDomainPrice(name, years);
-
       await contract.write.renew([name, BigInt(years)], {
-        value: price,
+        value: parseEther(price.toString()),
       });
     } catch (err) {
       console.error("Error renewing domain:", err);
@@ -286,22 +285,21 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     }
   };
 
-  const getDomainPrice = async (
-    name: string,
-    years: number
-  ): Promise<number> => {
+  const getDomainPrice = (name: string, years: number): number => {
     try {
+      let ethPrice: number;
       if (name.length === 3) {
-        return 0.012 * years;
+        ethPrice = 0.012 * years;
       } else if (name.length === 4) {
-        return 0.01 * years;
+        ethPrice = 0.01 * years;
       } else if (name.length === 5) {
-        return 0.008 * years;
+        ethPrice = 0.008 * years;
       } else if (name.length === 6) {
-        return 0.006 * years;
+        ethPrice = 0.006 * years;
       } else {
-        return 0.004 * years;
+        ethPrice = 0.004 * years;
       }
+      return ethPrice;
     } catch (err) {
       console.error("Error getting domain price:", err);
       throw err;
