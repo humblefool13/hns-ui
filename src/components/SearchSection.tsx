@@ -50,6 +50,7 @@ export default function SearchSection() {
   const [availableTLDs, setAvailableTLDs] = useState<string[]>([]);
   const [isLoadingTLDs, setIsLoadingTLDs] = useState(true);
   const [validationError, setValidationError] = useState<string>("");
+  const [hasAttemptedSearch, setHasAttemptedSearch] = useState(false);
 
   // Load available TLDs on component mount
   useEffect(() => {
@@ -148,6 +149,8 @@ export default function SearchSection() {
   }, [selectedYears, result, getDomainPrice]);
 
   const handleSearch = async () => {
+    setHasAttemptedSearch(true);
+
     if (!validation.isValid) return;
 
     setIsSearching(true);
@@ -331,7 +334,10 @@ export default function SearchSection() {
                 type="text"
                 placeholder="Search for a name like sausage.hotdogs"
                 value={domainName}
-                onChange={(e) => setDomainName(e.target.value)}
+                onChange={(e) => {
+                  setDomainName(e.target.value);
+                  setHasAttemptedSearch(false);
+                }}
                 className="relative w-full px-16 py-6 text-xl font-inter bg-background border-2 border-gray-200 dark:border-gray-600 rounded-3xl text-foreground placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-green-300 focus:border-green-400 transition-all duration-300 shadow-lg"
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
@@ -368,7 +374,7 @@ export default function SearchSection() {
               />
             </motion.button>
 
-            {validationError && (
+            {validationError && hasAttemptedSearch && (
               <p className="mt-3 text-sm text-red-600 dark:text-red-400">
                 {validationError}
               </p>
