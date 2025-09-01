@@ -44,7 +44,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
     isConnected,
     isLoading,
   } = useContract();
-  const { login } = useAbstractPrivyLogin();
+  const { login, link } = useAbstractPrivyLogin();
   const { disconnect } = useDisconnect();
 
   // State for blockchain data
@@ -126,7 +126,12 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
     try {
       await login();
     } catch (error) {
-      console.error("Failed to connect wallet:", error);
+      if ((error as Error).message.includes("already logged in")) {
+        await link();
+        window.location.reload();
+      } else {
+        console.error("Failed to connect wallet:", error);
+      }
     }
   };
 
