@@ -408,7 +408,7 @@ export default function SearchSection() {
               className="max-w-4xl mx-auto"
             >
               {result.type === "found" ? (
-                <div className="glass-card p-8 rounded-2xl border border-white/10">
+                <div className="glass-card p-8 rounded-2xl border border-black/10 dark:border-white/10">
                   <div className="text-center mb-6">
                     <motion.div
                       initial={{ scale: 0 }}
@@ -430,7 +430,7 @@ export default function SearchSection() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="p-6 border border-white/10 rounded-xl">
+                    <div className="p-6 border border-gray-600 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
                       <div className="flex items-center gap-3 mb-2">
                         <Crown className="text-yellow-500" size={18} />
                         <h3 className="font-semibold text-foreground">Owner</h3>
@@ -440,7 +440,7 @@ export default function SearchSection() {
                       </p>
                     </div>
 
-                    <div className="p-6 border border-white/10 rounded-xl">
+                    <div className="p-6 border border-gray-600 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
                       <div className="flex items-center gap-3 mb-2">
                         <Calendar className="text-blue-500" size={18} />
                         <h3 className="font-semibold text-foreground">
@@ -452,7 +452,7 @@ export default function SearchSection() {
                       </p>
                     </div>
 
-                    <div className="p-6 border border-white/10 rounded-xl">
+                    <div className="p-6 border border-gray-600 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
                       <div className="flex items-center gap-3 mb-2">
                         <ShoppingCart className="text-purple-500" size={18} />
                         <h3 className="font-semibold text-foreground">
@@ -483,7 +483,7 @@ export default function SearchSection() {
                         ))}
                       </div>
                     </div>
-                    <div className="p-6 border border-white/10 rounded-xl">
+                    <div className="p-6 border border-gray-600 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
                       <div className="flex items-center gap-3 mb-2">
                         <ExternalLink className="text-green-500" size={18} />
                         <h3 className="font-semibold text-foreground">
@@ -512,7 +512,7 @@ export default function SearchSection() {
                   </div>
                 </div>
               ) : (
-                <div className="glass-card p-8 rounded-2xl border border-white/10">
+                <div className="glass-card p-8 rounded-2xl border border-black/10 dark:border-white/10">
                   <div className="text-center mb-6">
                     <motion.div
                       initial={{ scale: 0 }}
@@ -534,7 +534,7 @@ export default function SearchSection() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="p-6 border border-white/10 rounded-xl">
+                    <div className="p-6 border border-gray-600 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
                       <div className="flex items-center gap-3 mb-3">
                         <Calendar className="text-blue-500" size={18} />
                         <h3 className="font-semibold text-foreground">
@@ -546,7 +546,7 @@ export default function SearchSection() {
                           <button
                             key={year}
                             onClick={() => setSelectedYears(year)}
-                            className={`p-3 rounded-xl border-2 text-sm transition-all ${
+                            className={`p-3 rounded-xl border-2 text-sm transition-all hover:border-green-500 duration-300 ${
                               selectedYears === year
                                 ? "border-green-400 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
                                 : "border-gray-200 dark:border-gray-600 hover:border-green-400"
@@ -558,7 +558,7 @@ export default function SearchSection() {
                       </div>
                     </div>
 
-                    <div className="p-6 border border-white/10 rounded-xl">
+                    <div className="p-6 border border-gray-600 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
                       <div className="flex items-center gap-3 mb-3">
                         <DollarSign className="text-green-500" size={18} />
                         <h3 className="font-semibold text-foreground">
