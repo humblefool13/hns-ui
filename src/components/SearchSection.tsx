@@ -32,6 +32,8 @@ export default function SearchSection() {
     name: string;
     owner?: string;
     expiration?: string;
+    nftAddress?: string;
+    tokenId?: string;
     price?: number;
     marketplaces?: { name: string; url: string; icon: string }[];
   }>(null);
@@ -174,6 +176,8 @@ export default function SearchSection() {
           name,
           owner: domainInfo.owner,
           expiration: expirationDate.toLocaleDateString(),
+          nftAddress: domainInfo.nftAddress,
+          tokenId: domainInfo.tokenId.toString(),
           marketplaces: [
             {
               name: "OpenSea",
@@ -477,6 +481,32 @@ export default function SearchSection() {
                             <ExternalLink size={12} />
                           </motion.a>
                         ))}
+                      </div>
+                    </div>
+                    <div className="p-6 border border-white/10 rounded-xl">
+                      <div className="flex items-center gap-3 mb-2">
+                        <ExternalLink className="text-green-500" size={18} />
+                        <h3 className="font-semibold text-foreground">
+                          Explorer
+                        </h3>
+                      </div>
+                      <div className="flex flex-col gap-3">
+                        <motion.a
+                          href={`https://sepolia.abscan.org/nft/${result.nftAddress}/${result.tokenId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-300 transition-all duration-300 w-fit"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          View on Abscan
+                          <ExternalLink size={12} />
+                        </motion.a>
+                        {result.nftAddress && result.tokenId && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 break-all">
+                            {result.nftAddress} / {result.tokenId}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
