@@ -26,12 +26,12 @@ function CodeBlock({ code }: { code: string }) {
   }
 
   return (
-    <div className="relative bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+    <div className="group relative bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
       <button
         aria-label={copied ? "Copied" : "Copy"}
         onClick={onCopy}
         disabled={copied}
-        className="absolute right-3 top-3 inline-flex items-center justify-center h-8 w-8 rounded-md border border-gray-300 dark:border-gray-700 bg-white/70 dark:bg-gray-900/50 hover:bg-white dark:hover:bg-gray-900 transition"
+        className="absolute right-3 top-3 inline-flex items-center justify-center h-8 w-8 rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-100/50 text-gray-700 shadow-sm dark:border-gray-700 dark:bg-gray-900/50 dark:hover:bg-gray-900 dark:text-gray-300 transition opacity-0 group-hover:opacity-100"
       >
         {copied ? (
           <Check className="h-4 w-4 text-green-600 hover:cursor-not-allowed" />
@@ -39,7 +39,7 @@ function CodeBlock({ code }: { code: string }) {
           <Clipboard className="h-4 w-4 text-gray-700 dark:text-gray-300 hover:cursor-pointer" />
         )}
       </button>
-      <pre className="text-xs whitespace-pre-wrap break-words overflow-x-auto">
+      <pre className="text-xs whitespace-pre-wrap break-words overflow-x-auto text-gray-800 dark:text-gray-200">
         {code}
       </pre>
     </div>
