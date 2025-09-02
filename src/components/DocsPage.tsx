@@ -26,7 +26,7 @@ function CodeBlock({ code }: { code: string }) {
   }
 
   return (
-    <div className="group relative bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
+    <div className="group relative bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
       <button
         aria-label={copied ? "Copied" : "Copy"}
         onClick={onCopy}
@@ -68,7 +68,7 @@ export default function DocsPage() {
         </div>
 
         {/* Architecture Overview */}
-        <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4">
+        <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300 glass-card">
           <div className="flex items-center gap-3">
             <FileText className="text-green-500" />
             <h2 className="text-2xl font-semibold text-foreground">
@@ -98,7 +98,7 @@ NameService (per TLD)
         </div>
 
         {/* Node.js RPC Setup */}
-        <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4">
+        <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300 glass-card">
           <div className="flex items-center gap-3">
             <Code className="text-blue-500" />
             <h2 className="text-2xl font-semibold text-foreground">
@@ -141,7 +141,7 @@ const manager = getContract({
 
         {/* Core Reads */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4">
+          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
             <div className="flex items-center gap-3">
               <Link className="text-blue-500" />
               <h3 className="text-xl font-semibold text-foreground">
@@ -157,7 +157,7 @@ const manager = getContract({
             />
           </div>
 
-          <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4">
+          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
             <div className="flex items-center gap-3">
               <RefreshCw className="text-purple-500" />
               <h3 className="text-xl font-semibold text-foreground">
@@ -174,7 +174,7 @@ const manager = getContract({
         </div>
 
         {/* TLD discovery and NameService access */}
-        <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4">
+        <div className="glass-card p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
           <div className="flex items-center gap-3">
             <FileText className="text-green-500" />
             <h2 className="text-2xl font-semibold text-foreground">
@@ -193,7 +193,7 @@ const manager = getContract({
 
         {/* Registrations */}
         <div className="grid grid-cols-1 gap-6">
-          <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4">
+          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
             <div className="flex items-center gap-3">
               <Code className="text-blue-500" />
               <h3 className="text-xl font-semibold text-foreground">
@@ -213,7 +213,7 @@ const manager = getContract({
             </p>
           </div>
 
-          <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4">
+          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
             <div className="flex items-center gap-3">
               <RefreshCw className="text-purple-500" />
               <h3 className="text-xl font-semibold text-foreground">Renew</h3>
@@ -226,7 +226,7 @@ const manager = getContract({
             />
           </div>
 
-          <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4">
+          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
             <div className="flex items-center gap-3">
               <Link className="text-blue-500" />
               <h3 className="text-xl font-semibold text-foreground">
@@ -244,7 +244,7 @@ const manager = getContract({
 
         {/* Additional Reads */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4">
+          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
             <div className="flex items-center gap-3">
               <FileText className="text-green-500" />
               <h3 className="text-xl font-semibold text-foreground">
@@ -260,7 +260,7 @@ const manager = getContract({
             />
           </div>
 
-          <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4">
+          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
             <div className="flex items-center gap-3">
               <Link className="text-blue-500" />
               <h3 className="text-xl font-semibold text-foreground">
