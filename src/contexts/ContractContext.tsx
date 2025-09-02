@@ -13,8 +13,8 @@ import { useAccount } from "wagmi";
 import { useAbstractClient } from "@abstract-foundation/agw-react";
 
 // Import contract ABIs
-import HNSManagerABI from "../../contracts/HNSManager.json";
-import NameServiceABI from "../../contracts/NameService.json";
+import HNSManagerABI from "../contracts/HNSManager.json";
+import NameServiceABI from "../contracts/NameService.json";
 
 // Contract addresses (you can make these configurable)
 const HNS_MANAGER_ADDRESS = "0xc8d700ba82ec3ea353821c0cb087725aeb585560";
@@ -81,14 +81,17 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
   const { address, isConnected } = useAccount();
   const { data: abstractClient } = useAbstractClient();
 
+  // No client-side RPC URL. When not connected, reads go through server API routes.
+
   const hnsManagerContract = useMemo(() => {
-    if (!abstractClient) return null;
+    const effectiveClient = abstractClient as any;
+    if (!effectiveClient) return null;
 
     return getContract({
       address: HNS_MANAGER_ADDRESS as Address,
       abi: HNSManagerABI.abi,
-      client: abstractClient,
-    });
+      client: effectiveClient,
+    }) as any;
   }, [abstractClient]);
 
   // Get or create NameService contract instance for a specific TLD
@@ -101,43 +104,47 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
 
   // HNS Manager read functions
   const getRegisteredTLDs = async (): Promise<string[]> => {
-    if (!hnsManagerContract) {
-      throw new Error("HNS Manager contract not initialized");
-    }
     try {
-      const tlds: string[] = [];
-      let index = 0;
-      if (!abstractClient) return [];
-      while (true) {
-        try {
-          const tld = (await hnsManagerContract.read.registeredTLDs([
-            BigInt(index),
-          ])) as string;
-          if (tld && tld !== "") {
-            tlds.push(tld);
-            const address = (await hnsManagerContract.read.tldContracts([
-              tld,
-            ])) as Address;
-            if (!nameServiceContracts.has(tld)) {
-              nameServiceContracts.set(
+      // If wallet-connected client exists, read directly
+      if (hnsManagerContract) {
+        const tlds: string[] = [];
+        let index = 0;
+        while (true) {
+          try {
+            const tld = (await hnsManagerContract.read.registeredTLDs([
+              BigInt(index),
+            ])) as string;
+            if (tld && tld !== "") {
+              tlds.push(tld);
+              const address = (await hnsManagerContract.read.tldContracts([
                 tld,
-                getContract({
-                  address: address,
-                  abi: NameServiceABI.abi,
-                  client: abstractClient,
-                })
-              );
+              ])) as Address;
+              if (!nameServiceContracts.has(tld)) {
+                nameServiceContracts.set(
+                  tld,
+                  getContract({
+                    address: address,
+                    abi: NameServiceABI.abi,
+                    client: abstractClient as any,
+                  }) as any
+                );
+              }
+              index++;
+            } else {
+              break;
             }
-            index++;
-          } else {
+          } catch {
             break;
           }
-        } catch {
-          break;
         }
+        return tlds;
       }
 
-      return tlds;
+      // Otherwise, use server API route
+      const res = await fetch("/api/hns/tlds", { cache: "no-store" });
+      if (!res.ok) throw new Error("Failed to fetch TLDs");
+      const data = (await res.json()) as { tlds: string[] };
+      return data.tlds ?? [];
     } catch (err) {
       console.error("Error getting registered TLDs:", err);
       throw err;
@@ -148,22 +155,39 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     name: string,
     tld: string
   ): Promise<DomainInfo | null> => {
-    if (!hnsManagerContract) {
-      throw new Error("HNS Manager contract not initialized");
-    }
-
     try {
-      const result = (await hnsManagerContract.read.resolve([name, tld])) as [
-        Address,
-        bigint,
-        Address,
-        bigint
-      ];
+      if (hnsManagerContract) {
+        const result = (await hnsManagerContract.read.resolve([name, tld])) as [
+          Address,
+          bigint,
+          Address,
+          bigint
+        ];
+        return {
+          owner: result[0],
+          expiration: result[1],
+          nftAddress: result[2],
+          tokenId: result[3],
+        };
+      }
+
+      const res = await fetch("/api/hns/resolve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, tld }),
+      });
+      if (!res.ok) return null;
+      const data = (await res.json()) as {
+        owner: Address;
+        expiration: string;
+        nftAddress: Address;
+        tokenId: string;
+      };
       return {
-        owner: result[0],
-        expiration: result[1],
-        nftAddress: result[2],
-        tokenId: result[3],
+        owner: data.owner,
+        expiration: BigInt(data.expiration),
+        nftAddress: data.nftAddress,
+        tokenId: BigInt(data.tokenId),
       };
     } catch (err) {
       console.error("Error resolving domain:", err);
@@ -342,12 +366,14 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       }
     };
 
-    if (abstractClient && hnsManagerContract) {
+    if (hnsManagerContract) {
       initializeContracts();
-    } else if (!abstractClient) {
+    } else if (!isConnected) {
+      setIsLoading(false);
+    } else {
       setIsLoading(true);
     }
-  }, [abstractClient]);
+  }, [hnsManagerContract]);
 
   const contextValue: ContractContextType = {
     hnsManagerContract,

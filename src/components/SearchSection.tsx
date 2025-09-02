@@ -52,7 +52,7 @@ export default function SearchSection() {
   const [validationError, setValidationError] = useState<string>("");
   const [hasAttemptedSearch, setHasAttemptedSearch] = useState(false);
 
-  // Load available TLDs on component mount
+  // Load available TLDs on component mount (works even if not connected via fallback client)
   useEffect(() => {
     const loadTLDs = async () => {
       try {
@@ -67,7 +67,7 @@ export default function SearchSection() {
       }
     };
 
-    if (!isLoading && isConnected) loadTLDs();
+    if (!isLoading) loadTLDs();
   }, [isLoading, getRegisteredTLDs]);
 
   // Parse domain input
