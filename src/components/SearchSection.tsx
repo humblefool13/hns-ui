@@ -53,6 +53,9 @@ export default function SearchSection() {
   const [isLoadingTLDs, setIsLoadingTLDs] = useState(true);
   const [validationError, setValidationError] = useState<string>("");
   const [hasAttemptedSearch, setHasAttemptedSearch] = useState(false);
+  const [tx, setTx] = useState<string | null>(null);
+  const explorerTxUrl = tx ? `https://sepolia.abscan.org/tx/${tx}` : null;
+  const shortTx = tx ? `${tx.slice(0, 10)}…${tx.slice(-6)}` : null;
 
   // Load available TLDs on component mount (works even if not connected via fallback client)
   useEffect(() => {
@@ -69,7 +72,9 @@ export default function SearchSection() {
       }
     };
 
-    if (!isLoading) loadTLDs();
+    if (!isLoading && availableTLDs.length === 0) {
+      loadTLDs();
+    }
   }, [isLoading, getRegisteredTLDs]);
 
   // Parse domain input
@@ -242,7 +247,8 @@ export default function SearchSection() {
 
     setIsRegistering(true);
     try {
-      await registerDomain(result.name, result.tld, selectedYears);
+      const tx = await registerDomain(result.name, result.tld, selectedYears);
+      setTx(tx);
       // Refresh the search to show the domain is now taken
       await handleSearch();
     } catch (error) {
@@ -576,25 +582,45 @@ export default function SearchSection() {
                         Connect Wallet to Register
                       </motion.button>
                     ) : (
-                      <motion.button
-                        onClick={handleRegister}
-                        disabled={isRegistering}
-                        className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-10 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105 shadow-lg inline-flex items-center gap-2 disabled:opacity-60"
-                        whileHover={{ scale: isRegistering ? 1 : 1.05 }}
-                        whileTap={{ scale: isRegistering ? 1 : 0.95 }}
-                      >
-                        {isRegistering ? (
-                          <>
-                            <Loader2 className="animate-spin mr-2" size={20} />
-                            Registering...
-                          </>
+                      <>
+                        {!tx ? (
+                          <motion.button
+                            onClick={handleRegister}
+                            disabled={isRegistering}
+                            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-10 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105 shadow-lg inline-flex items-center gap-2 disabled:opacity-60"
+                            whileHover={{ scale: isRegistering ? 1 : 1.05 }}
+                            whileTap={{ scale: isRegistering ? 1 : 0.95 }}
+                          >
+                            {isRegistering ? (
+                              <>
+                                <Loader2
+                                  className="animate-spin mr-2"
+                                  size={20}
+                                />
+                                Registering...
+                              </>
+                            ) : (
+                              <>
+                                <Zap size={20} />
+                                Register {result.domain}
+                              </>
+                            )}
+                          </motion.button>
                         ) : (
-                          <>
-                            <Zap size={20} />
-                            Register {result.domain}
-                          </>
+                          <motion.a
+                            href={explorerTxUrl || "#"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-10 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105 shadow-lg inline-flex items-center gap-2"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <CheckCircle size={20} />
+                            Done • {shortTx}
+                            <ExternalLink size={16} />
+                          </motion.a>
                         )}
-                      </motion.button>
+                      </>
                     )}
                   </div>
                 </div>
