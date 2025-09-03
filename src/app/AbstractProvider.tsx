@@ -1,8 +1,8 @@
 "use client";
 
-import { AbstractPrivyProvider } from "@abstract-foundation/agw-react/privy";
-import { abstractTestnet } from "wagmi/chains";
-// const abstractId = 'cm04asygd041fmry9zmcyn5o5';
+import { AbstractWalletProvider } from "@abstract-foundation/agw-react";
+import { abstractTestnet, abstract } from "viem/chains";
+
 const appId = "cmeeq3d5u00l6kz0bzkkklsw3";
 export default function AbstractProvider({
   children,
@@ -10,8 +10,8 @@ export default function AbstractProvider({
   children: React.ReactNode;
 }) {
   return (
-    <AbstractPrivyProvider appId={appId} chain={abstractTestnet}>
+    <AbstractWalletProvider chain={abstractTestnet}>
       {children}
-    </AbstractPrivyProvider>
+    </AbstractWalletProvider>
   );
 }

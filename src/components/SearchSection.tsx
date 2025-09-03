@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { useContract } from "../contexts/ContractContext";
-import { useAbstractPrivyLogin } from "@abstract-foundation/agw-react/privy";
+import { useLoginWithAbstract } from "@abstract-foundation/agw-react";
 
 export default function SearchSection() {
   const [domainName, setDomainName] = useState("");
@@ -46,7 +46,7 @@ export default function SearchSection() {
     isConnected,
     isLoading,
   } = useContract();
-  const { login, link } = useAbstractPrivyLogin();
+  const { login } = useLoginWithAbstract();
 
   // State for TLDs and validation
   const [availableTLDs, setAvailableTLDs] = useState<string[]>([]);
@@ -236,19 +236,6 @@ export default function SearchSection() {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleConnectWallet = async () => {
-    try {
-      await login();
-    } catch (error) {
-      if ((error as Error).message.includes("already logged in")) {
-        await link();
-        window.location.reload();
-      } else {
-        console.error("Failed to connect wallet:", error);
-      }
-    }
-  };
-
   const handleRegister = async () => {
     if (!isConnected || !result || result.type !== "not-found" || isRegistering)
       return;
@@ -352,7 +339,7 @@ export default function SearchSection() {
             </div>
 
             <motion.button
-              className="abstract-green-gradient mt-6 px-12 py-4 text-xl font-inter text-white shadow-lg relative overflow-hidden rounded-2xl disabled:opacity-60"
+              className="abstract-green-gradient mt-6 px-12 py-4 text-xl font-inter text-white shadow-lg relative overflow-hidden rounded-2xl disabled:opacity-60 inline-flex items-center justify-center gap-2 whitespace-nowrap"
               disabled={
                 !domainName.trim() ||
                 !validation.isValid ||
@@ -580,7 +567,7 @@ export default function SearchSection() {
                   <div className="text-center">
                     {!isConnected ? (
                       <motion.button
-                        onClick={handleConnectWallet}
+                        onClick={login}
                         className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-10 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105 shadow-lg inline-flex items-center gap-2"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}

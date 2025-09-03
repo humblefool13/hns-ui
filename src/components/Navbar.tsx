@@ -21,8 +21,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "../contexts/ThemeProvider";
 import { useState, useEffect } from "react";
-import { useAbstractPrivyLogin } from "@abstract-foundation/agw-react/privy";
-import { useDisconnect } from "wagmi";
+import { useLoginWithAbstract } from "@abstract-foundation/agw-react";
 import Image from "next/image";
 import { useContract } from "@/contexts/ContractContext";
 
@@ -44,8 +43,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
     isConnected,
     isLoading,
   } = useContract();
-  const { login, link } = useAbstractPrivyLogin();
-  const { disconnect } = useDisconnect();
+  const { login, logout } = useLoginWithAbstract();
 
   // State for blockchain data
   const [mainDomain, setMainDomain] = useState<string>("");
@@ -121,23 +119,6 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
     getAddressDomains,
     resolveDomain,
   ]);
-
-  const handleConnectWallet = async () => {
-    try {
-      await login();
-    } catch (error) {
-      if ((error as Error).message.includes("already logged in")) {
-        await link();
-        window.location.reload();
-      } else {
-        console.error("Failed to connect wallet:", error);
-      }
-    }
-  };
-
-  const handleDisconnect = () => {
-    disconnect();
-  };
 
   // Don't render theme-dependent content until mounted to prevent hydration mismatch
   if (!mounted) {
@@ -277,7 +258,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
                       </span>
                     </div>
                     <button
-                      onClick={handleDisconnect}
+                      onClick={logout}
                       className={`p-1 transition-colors ${
                         theme === "dark"
                           ? "text-gray-400 hover:text-gray-200"
@@ -389,8 +370,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
                   Start managing your hotdog names
                 </p>
                 <motion.button
-                  onClick={handleConnectWallet}
-                  disabled={status === "connecting"}
+                  onClick={login}
                   className="abstract-green-gradient w-full py-2 px-4 text-white text-sm font-inter font-medium rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                   whileHover={{ scale: status === "connecting" ? 1 : 1.02 }}
                   whileTap={{ scale: status === "connecting" ? 1 : 0.98 }}
