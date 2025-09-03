@@ -19,7 +19,7 @@ export default function HomePage() {
       case "search":
         return <SearchSection />;
       case "manage":
-        return <ManagePage />;
+        return <ManagePage changeToSearch={() => setCurrentPage("search")} />;
       case "activity":
         return <ActivityPage />;
       case "guide":

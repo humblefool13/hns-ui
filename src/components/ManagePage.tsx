@@ -13,7 +13,11 @@ import {
   Unlock,
 } from "lucide-react";
 
-export default function ManagePage() {
+export default function ManagePage({
+  changeToSearch,
+}: {
+  changeToSearch: () => void;
+}) {
   const ownedDomains = [
     {
       id: 1,
@@ -60,7 +64,10 @@ export default function ManagePage() {
                 Control and configure your Web3 identity portfolio
               </p>
             </div>
-            <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center gap-2">
+            <button
+              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center gap-2"
+              onClick={changeToSearch}
+            >
               <Plus size={20} />
               Register New Name
             </button>
