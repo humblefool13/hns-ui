@@ -82,6 +82,22 @@ export default function DocsPage() {
             Public dapps interact with public functions only; any restricted
             admin flows are intentionally excluded here.
           </p>
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+              Naming Rules
+            </h3>
+            <div className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
+              <div>
+                <strong>TLDs:</strong> 3-10 characters, letters only (no numbers
+                or special characters), lowercase only.
+              </div>
+              <div>
+                <strong>Names:</strong> 3-10 characters, letters, numbers, and
+                hyphens allowed. No consecutive hyphens, no hyphens at beginning
+                or end, lowercase only.
+              </div>
+            </div>
+          </div>
           <pre className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">{`Manager (HNSManager)
   ├─ Tracks registered TLDs: ["rise", "hotdogs", ...]
   ├─ Maps TLD -> NameService contract address
@@ -91,7 +107,7 @@ export default function DocsPage() {
 NameService (per TLD)
   ├─ Owns registration data for that TLD
   ├─ Public flows: register(name, years), renew(name, years), transferDomain(name, to)
-  └─ Reads: getExpiration(name) and ABI-specific helpers`}</pre>
+  └─ Reads: getDomainExpiration(name) and ABI-specific helpers`}</pre>
           <CodeBlock
             code={`// Deployed manager address\nconst HNS_MANAGER_ADDRESS = "${HNS_MANAGER_ADDRESS}"`}
           />
