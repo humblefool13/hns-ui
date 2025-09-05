@@ -264,11 +264,54 @@ export default function SearchSection() {
       <div className="max-w-6xl mx-auto">
         {/* Hero Card */}
         <motion.div
-          className="glass-card rounded-2xl p-12 text-center my-18"
+          className="glass-card rounded-2xl p-12 text-center my-18 relative"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
+          <motion.div
+            className="absolute top-6 right-6 group cursor-pointer z-20"
+            initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
+            whileHover={{ scale: 1.1, rotate: 5 }}
+          >
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 rounded-full blur-sm opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-300 via-yellow-400 to-amber-500 rounded-full animate-pulse"></div>
+              </div>
+              <div className="relative bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 rounded-full p-4 shadow-2xl border-2 border-yellow-300 group-hover:border-yellow-200 transition-all duration-300">
+                <div className="text-white text-2xl mb-1 group-hover:scale-110 transition-transform duration-300">
+                  👑
+                </div>
+                <div className="text-white text-xs font-bold tracking-wider group-hover:scale-105 transition-transform duration-300">
+                  XP REWARDS
+                </div>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity duration-300"></div>
+              </div>
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-64 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/90 dark:to-amber-900/90 border-2 border-yellow-300 dark:border-yellow-600 rounded-2xl p-3 shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none">
+                <div className="text-center">
+                  <div className="text-yellow-200 dark:text-yellow-200 font-bold text-sm mb-2 flex items-center justify-center gap-1">
+                    <span>👑</span>
+                    <span>HotDogs NFT XP</span>
+                    <span>👑</span>
+                  </div>
+                  <div className="text-yellow-700 dark:text-yellow-300 text-xs space-y-1">
+                    <p className="font-semibold">Abstract Portal:</p>
+                    <p>• Earn XP for holding NFTs</p>
+                    <p className="font-semibold mt-2">HotDogs Portal:</p>
+                    <p>• 10 points per NFT</p>
+                    <p>• Bonus from badges</p>
+                    <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1 italic">
+                      Level up with badges!
+                    </p>
+                  </div>
+                </div>
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-l-transparent border-r-transparent border-b-yellow-300 dark:border-b-yellow-600"></div>
+              </div>
+            </div>
+          </motion.div>
+
           {/* Main Heading */}
           <motion.h1
             className="text-5xl md:text-7xl font-inter pb-10 animated-gradient-text-wave drop-shadow-lg transition-all duration-300"
