@@ -17,7 +17,7 @@ import HNSManagerABI from "../contracts/HNSManager.json";
 import NameServiceABI from "../contracts/NameService.json";
 
 // Contract addresses (you can make these configurable)
-export const HNS_MANAGER_ADDRESS = "0xc8d700ba82ec3ea353821c0cb087725aeb585560";
+export const HNS_MANAGER_ADDRESS = "0xE0857C3Ba800414D395946D195224d387b35F5e8";
 
 // Types for contract interactions
 export interface DomainInfo {
