@@ -47,6 +47,7 @@
   }
 }
 
+
 /* Animated gradient text utilities */
 .animated-gradient-text {
   background: linear-gradient(45deg, #03d26e, #41f09c, #00c466, #22c55e, #03d26e);
@@ -920,3 +921,4 @@ body.dark {
 .dark .hover\:text-green-500:hover {
   color: #22c55e;
 }
+

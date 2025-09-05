@@ -18,6 +18,7 @@ import {
 import { useMemo, useState, useEffect } from "react";
 import { useContract } from "../contexts/ContractContext";
 import { useLoginWithAbstract } from "@abstract-foundation/agw-react";
+import NFTSVGCreator from "./NFTSVGCreator";
 
 export default function SearchSection() {
   const [domainName, setDomainName] = useState("");
@@ -467,6 +468,29 @@ export default function SearchSection() {
                     </p>
                   </div>
 
+                  {/* NFT Preview */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="flex justify-center mb-6"
+                  >
+                    <div className="relative group">
+                      <NFTSVGCreator
+                        name={result.name}
+                        tld={result.tld}
+                        className="w-48 h-48 rounded-2xl shadow-2xl border-2 border-gray-200 dark:border-gray-600 transition-all duration-300 group-hover:shadow-red-500/50 group-hover:shadow-3xl group-hover:scale-105 group-hover:border-red-300 dark:group-hover:border-red-400"
+                      />
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+
+                      {/* Red Glow Effect */}
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-400/0 via-red-500/0 to-red-400/0 group-hover:from-red-400/20 group-hover:via-red-500/30 group-hover:to-red-400/20 transition-all duration-500 pointer-events-none" />
+
+                      {/* Pulsing Ring Effect */}
+                      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-red-400/50 group-hover:animate-pulse transition-all duration-300 pointer-events-none" />
+                    </div>
+                  </motion.div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div className="p-6 border border-gray-200 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
                       <div className="flex items-center gap-3 mb-2">
@@ -570,6 +594,29 @@ export default function SearchSection() {
                       is ready to be claimed
                     </p>
                   </div>
+
+                  {/* NFT Preview */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="flex justify-center mb-6"
+                  >
+                    <div className="relative group">
+                      <NFTSVGCreator
+                        name={result.name}
+                        tld={result.tld}
+                        className="w-48 h-48 rounded-2xl shadow-2xl border-2 border-green-400 dark:border-green-500 transition-all duration-300 group-hover:shadow-green-500/50 group-hover:shadow-3xl group-hover:scale-105 group-hover:border-green-300 dark:group-hover:border-green-400"
+                      />
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+
+                      {/* Green Glow Effect */}
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/0 via-green-500/0 to-green-400/0 group-hover:from-green-400/20 group-hover:via-green-500/30 group-hover:to-green-400/20 transition-all duration-500 pointer-events-none" />
+
+                      {/* Pulsing Ring Effect */}
+                      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-green-400/50 group-hover:animate-pulse transition-all duration-300 pointer-events-none" />
+                    </div>
+                  </motion.div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div className="p-6 border border-gray-200 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">

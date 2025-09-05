@@ -17,7 +17,7 @@ import HNSManagerABI from "../contracts/HNSManager.json";
 import NameServiceABI from "../contracts/NameService.json";
 
 // Contract addresses (you can make these configurable)
-export const HNS_MANAGER_ADDRESS = "0xE0857C3Ba800414D395946D195224d387b35F5e8";
+export const HNS_MANAGER_ADDRESS = process.env.HNS_MANAGER_ADDRESS as Address;
 
 // Types for contract interactions
 export interface DomainInfo {
@@ -96,7 +96,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
 
   // Get or create NameService contract instance for a specific TLD
   const getNameServiceContract = (tld: string) => {
-    if (nameServiceContracts.has(tld)) {
+    if (nameServiceContracts.has(tld.toLowerCase())) {
       return nameServiceContracts.get(tld);
     }
     return null;
@@ -157,12 +157,10 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
   ): Promise<DomainInfo | null> => {
     try {
       if (hnsManagerContract) {
-        const result = (await hnsManagerContract.read.resolve([name, tld])) as [
-          Address,
-          bigint,
-          Address,
-          bigint
-        ];
+        const result = (await hnsManagerContract.read.resolve([
+          name.toLowerCase(),
+          tld.toLowerCase(),
+        ])) as [Address, bigint, Address, bigint];
         return {
           owner: result[0],
           expiration: result[1],
@@ -258,7 +256,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     functionName: string,
     args: any[],
     address: Address,
-    value: bigint
+    value: bigint | null
   ): Promise<Hex> => {
     try {
       let name: string;
@@ -274,14 +272,27 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
           throw new Error("Invalid function name: " + functionName);
       }
       if (!abstractClient) throw new Error("Abstract client not initialized");
-      console.log("abstractClient", abstractClient);
-      const transaction = await abstractClient.writeContract({
-        address,
-        abi: NameServiceABI.abi,
-        functionName: name,
-        args,
-        value,
-      });
+      let transaction: Hex;
+      if (value) {
+        transaction = await abstractClient.writeContract({
+          address,
+          abi: NameServiceABI.abi,
+          functionName: name,
+          args: args.map((arg) =>
+            typeof arg === "string" ? arg.toLowerCase() : arg
+          ),
+          value,
+        });
+      } else {
+        transaction = await abstractClient.writeContract({
+          address,
+          abi: NameServiceABI.abi,
+          functionName: name,
+          args: args.map((arg) =>
+            typeof arg === "string" ? arg.toLowerCase() : arg
+          ),
+        });
+      }
       return transaction as Hex;
     } catch (err) {
       console.error("Error sending transaction:", err);
@@ -349,7 +360,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
         "transfer",
         [name, to],
         contract.address,
-        parseEther("0")
+        null
       );
       return hex as string;
     } catch (err) {
