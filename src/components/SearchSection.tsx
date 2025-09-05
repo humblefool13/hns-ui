@@ -264,19 +264,21 @@ export default function SearchSection() {
       <div className="max-w-6xl mx-auto">
         {/* Hero Card */}
         <motion.div
-          className="glass-card rounded-2xl p-12 text-center mb-12"
+          className="glass-card rounded-2xl p-12 text-center my-18"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           {/* Main Heading */}
           <motion.h1
-            className="text-5xl md:text-7xl font-inter mb-6 text-foreground drop-shadow-lg transition-colors duration-300"
+            className="text-5xl md:text-7xl font-inter pb-10 animated-gradient-text-wave drop-shadow-lg transition-all duration-300"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
-            Your Web3 Name, HotDog-Style
+            Your Web3 Name
+            <br />
+            HotDog-Style
           </motion.h1>
 
           {/* Subtitle */}
@@ -306,7 +308,7 @@ export default function SearchSection() {
                 {availableTLDs.map((tld) => (
                   <span
                     key={tld}
-                    className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium"
+                    className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium hover:animated-gradient-text-fast transition-all duration-300 hover:scale-105"
                   >
                     .{tld}
                   </span>

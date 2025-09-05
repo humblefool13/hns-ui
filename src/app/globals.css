@@ -1,5 +1,102 @@
 @import "tailwindcss";
 
+/* Animated gradient keyframes */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes gradientPulse {
+  0%, 100% {
+    background-position: 0% 50%;
+    opacity: 1;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 0.8;
+  }
+}
+
+@keyframes gradientWave {
+  0% {
+    background-position: 0% 50%;
+    transform: scale(1);
+  }
+  25% {
+    background-position: 25% 50%;
+    transform: scale(1.02);
+  }
+  50% {
+    background-position: 100% 50%;
+    transform: scale(1);
+  }
+  75% {
+    background-position: 75% 50%;
+    transform: scale(1.02);
+  }
+  100% {
+    background-position: 0% 50%;
+    transform: scale(1);
+  }
+}
+
+/* Animated gradient text utilities */
+.animated-gradient-text {
+  background: linear-gradient(45deg, #03d26e, #41f09c, #00c466, #22c55e, #03d26e);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 4s ease-in-out infinite;
+}
+
+.animated-gradient-text-pulse {
+  background: linear-gradient(45deg, #03d26e, #41f09c, #00c466, #16a34a, #03d26e);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientPulse 3s ease-in-out infinite;
+}
+
+.animated-gradient-text-wave {
+  background: linear-gradient(45deg, #03d26e, #41f09c, #00c466, #22c55e, #16a34a, #03d26e);
+  background-size: 500% 500%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientWave 5s ease-in-out infinite;
+}
+
+.animated-gradient-text-fast {
+  background: linear-gradient(45deg, #03d26e, #41f09c, #00c466, #22c55e, #03d26e);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 2s ease-in-out infinite;
+}
+
+/* Hover effects for gradient text */
+.animated-gradient-text:hover {
+  animation-duration: 1.5s;
+}
+
+.animated-gradient-text-pulse:hover {
+  animation-duration: 1s;
+}
+
+.animated-gradient-text-wave:hover {
+  animation-duration: 2s;
+}
+
 :root {
   /* Abstract Green Theme - Light Mode Default */
   --background: #ffffff;
