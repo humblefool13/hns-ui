@@ -83,8 +83,6 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
   const { address, isConnected } = useAccount();
   const { data: abstractClient } = useAbstractClient();
 
-  // No client-side RPC URL. When not connected, reads go through server API routes.
-
   const hnsManagerContract = useMemo(() => {
     const effectiveClient = abstractClient as any;
     if (!effectiveClient) return null;
@@ -442,13 +440,6 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     if (hnsManagerContract) {
       initializeContracts();
     }
-    /*
-    else if (!isConnected) {
-      setIsLoading(false);
-    } else {
-      setIsLoading(true);
-    }
-      */
   }, [hnsManagerContract]);
 
   const contextValue: ContractContextType = {
