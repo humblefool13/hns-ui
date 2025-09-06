@@ -44,6 +44,7 @@ export interface ContractContextType {
   reverseLookup: (address: Address) => Promise<string>;
   getAddressDomains: (address: Address) => Promise<string[]>;
   getMainDomain: (address: Address) => Promise<string>;
+  setMainDomain: (domain: string) => Promise<string>;
 
   // Name Service functions
   registerDomain: (name: string, tld: string, years: number) => Promise<string>;
@@ -263,6 +264,20 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     }
   };
 
+  const setMainDomain = async (domain: string): Promise<string> => {
+    if (!hnsManagerContract) {
+      throw new Error("HNS Manager contract not initialized");
+    }
+    try {
+      const logs = await hnsManagerContract.write.setMainDomain([domain]);
+      console.log(logs);
+      return logs as string;
+    } catch (err) {
+      console.error("Error setting main domain:", err);
+      throw err;
+    }
+  };
+
   // const sendTransaction = async (
   //   functionName: string,
   //   args: any[],
@@ -402,7 +417,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       const contract = getNameServiceContract(tld);
       if (!contract)
         throw new Error("Name service contract not initialized for " + tld);
-      return await contract.read.getExpiration([name]);
+      return await contract.read.getDomainExpiration([name]);
     } catch (err) {
       console.error("Error getting domain expiration:", err);
       throw err;
@@ -447,6 +462,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     reverseLookup,
     getAddressDomains,
     getMainDomain,
+    setMainDomain,
     registerDomain,
     renewDomain,
     transferDomain,

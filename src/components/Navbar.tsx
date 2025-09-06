@@ -276,14 +276,14 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
                 >
                   <p
                     className={`text-xs font-inter mb-1 transition-colors duration-300 ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-500"
+                      theme === "dark" ? "text-gray-300" : "text-gray-500"
                     }`}
                   >
                     {mainDomain ? "Main Domain" : "Wallet Address"}
                   </p>
                   <p
                     className={`text-xs font-inter font-mono break-all transition-colors duration-300 ${
-                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                      theme === "dark" ? "text-gray-200" : "text-gray-700"
                     }`}
                   >
                     {isLoadingData ? (
