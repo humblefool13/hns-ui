@@ -40,6 +40,7 @@ export default function SearchSection() {
   }>(null);
 
   const {
+    hnsManagerContract,
     getRegisteredTLDs,
     resolveDomain,
     getDomainPrice,
@@ -58,25 +59,18 @@ export default function SearchSection() {
   const explorerTxUrl = tx ? `https://sepolia.abscan.org/tx/${tx}` : null;
   const shortTx = tx ? `${tx.slice(0, 10)}…${tx.slice(-6)}` : null;
 
-  // Load available TLDs on component mount (works even if not connected via fallback client)
   useEffect(() => {
-    const loadTLDs = async () => {
-      try {
-        setIsLoadingTLDs(true);
-        const tlds = await getRegisteredTLDs();
-        setAvailableTLDs(tlds);
-      } catch (error) {
-        console.error("Error loading TLDs:", error);
-        setAvailableTLDs([]);
-      } finally {
-        setIsLoadingTLDs(false);
-      }
-    };
-
-    if (!isLoading && availableTLDs.length === 0) {
+    if (isConnected && hnsManagerContract) {
       loadTLDs();
     }
-  }, [isLoading, getRegisteredTLDs]);
+  }, [isConnected, hnsManagerContract]);
+
+  const loadTLDs = async () => {
+    if (availableTLDs.length) return;
+    const tlds = await getRegisteredTLDs();
+    setAvailableTLDs(tlds ?? []);
+    setIsLoadingTLDs(false);
+  };
 
   // Parse domain input
   const parsed = useMemo(() => {
@@ -113,8 +107,8 @@ export default function SearchSection() {
       return { isValid: false, error: "Name must be at least 3 characters" };
     }
 
-    if (name.length > 20) {
-      return { isValid: false, error: "Name must be 20 characters or less" };
+    if (name.length > 10) {
+      return { isValid: false, error: "Name must be 10 characters or less" };
     }
 
     if (!/^[a-zA-Z0-9]+$/.test(name)) {
@@ -396,7 +390,8 @@ export default function SearchSection() {
                 !domainName.trim() ||
                 !validation.isValid ||
                 isSearching ||
-                isLoading
+                isLoading ||
+                !isConnected
               }
               whileHover={{ scale: isSearching ? 1 : 1.05 }}
               whileTap={{ scale: isSearching ? 1 : 0.95 }}
@@ -407,8 +402,10 @@ export default function SearchSection() {
                   <Loader2 className="animate-spin mr-2" size={20} />
                   Searching…
                 </>
-              ) : (
+              ) : isConnected ? (
                 "Check Availability"
+              ) : (
+                "Connect Wallet"
               )}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"

@@ -8,7 +8,7 @@ import React, {
   useMemo,
   ReactNode,
 } from "react";
-import { getContract, type Address, parseEther, type Hex } from "viem";
+import { getContract, type Address, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useAbstractClient } from "@abstract-foundation/agw-react";
 
@@ -17,7 +17,7 @@ import HNSManagerABI from "../contracts/HNSManager.json";
 import NameServiceABI from "../contracts/NameService.json";
 
 // Contract addresses (you can make these configurable)
-export const HNS_MANAGER_ADDRESS = process.env.HNS_MANAGER_ADDRESS as Address;
+export const HNS_MANAGER_ADDRESS = "0xE1537A9B23a39A8b0DB4ad1Ff41F929a1CCB1AD9";
 
 // Types for contract interactions
 export interface DomainInfo {
@@ -101,41 +101,41 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
   };
 
   // HNS Manager read functions
-  const getRegisteredTLDs = async (): Promise<string[] | undefined> => {
+  const getRegisteredTLDs = async (): Promise<string[]> => {
     try {
-      if (hnsManagerContract) {
-        const tlds: string[] = [];
-        let index = 0;
-        while (true) {
-          try {
-            const tld = (await hnsManagerContract.read.registeredTLDs([
-              BigInt(index),
-            ])) as string;
-            if (tld && tld !== "") {
-              tlds.push(tld);
-              const address = (await hnsManagerContract.read.tldContracts([
+      if (!hnsManagerContract)
+        throw new Error("HNS Manager contract not initialized");
+      const tlds: string[] = [];
+      let index = 0;
+      while (true) {
+        try {
+          const tld = (await hnsManagerContract.read.registeredTLDs([
+            BigInt(index),
+          ])) as string;
+          if (tld && tld !== "") {
+            tlds.push(tld);
+            const address = (await hnsManagerContract.read.tldContracts([
+              tld,
+            ])) as Address;
+            if (!nameServiceContracts.has(tld)) {
+              nameServiceContracts.set(
                 tld,
-              ])) as Address;
-              if (!nameServiceContracts.has(tld)) {
-                nameServiceContracts.set(
-                  tld,
-                  getContract({
-                    address: address,
-                    abi: NameServiceABI,
-                    client: abstractClient as any,
-                  }) as any
-                );
-              }
-              index++;
-            } else {
-              break;
+                getContract({
+                  address: address,
+                  abi: NameServiceABI,
+                  client: abstractClient as any,
+                }) as any
+              );
             }
-          } catch {
+            index++;
+          } else {
             break;
           }
+        } catch {
+          break;
         }
-        return tlds;
       }
+      return tlds;
     } catch (err) {
       console.error("Error getting registered TLDs:", err);
       throw err;
@@ -146,20 +146,20 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     name: string,
     tld: string
   ): Promise<DomainInfo | null> => {
+    if (!hnsManagerContract) {
+      throw new Error("HNS Manager contract not initialized");
+    }
     try {
-      if (hnsManagerContract) {
-        const result = (await hnsManagerContract.read.resolve([
-          name.toLowerCase(),
-          tld.toLowerCase(),
-        ])) as [Address, bigint, Address, bigint];
-        return {
-          owner: result[0],
-          expiration: result[1],
-          nftAddress: result[2],
-          tokenId: result[3],
-        };
-      }
-      return null;
+      const result = (await hnsManagerContract.read.resolve([
+        name.toLowerCase(),
+        tld.toLowerCase(),
+      ])) as [Address, bigint, Address, bigint];
+      return {
+        owner: result[0],
+        expiration: result[1],
+        nftAddress: result[2],
+        tokenId: result[3],
+      };
     } catch (err) {
       console.error("Error resolving domain:", err);
       return null;
@@ -230,55 +230,56 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     }
   };
 
-  const sendTransaction = async (
-    functionName: string,
-    args: any[],
-    address: Address,
-    value: bigint | null
-  ): Promise<Hex> => {
-    try {
-      let name: string;
-      switch (functionName) {
-        case "register":
-        case "renew":
-          name = functionName;
-          break;
-        case "transfer":
-          name = "transferDomain";
-          break;
-        default:
-          throw new Error("Invalid function name: " + functionName);
-      }
-      if (!abstractClient) throw new Error("Abstract client not initialized");
-      let transaction: Hex;
-      if (value) {
-        transaction = await abstractClient.writeContract({
-          address,
-          abi: NameServiceABI,
-          functionName: name,
-          args: args.map((arg) =>
-            typeof arg === "string" ? arg.toLowerCase() : arg
-          ),
-          value,
-        });
-      } else {
-        transaction = await abstractClient.writeContract({
-          address,
-          abi: NameServiceABI,
-          functionName: name,
-          args: args.map((arg) =>
-            typeof arg === "string" ? arg.toLowerCase() : arg
-          ),
-        });
-      }
-      return transaction as Hex;
-    } catch (err) {
-      console.error("Error sending transaction:", err);
-      throw err;
-    }
-  };
+  // const sendTransaction = async (
+  //   functionName: string,
+  //   args: any[],
+  //   address: Address,
+  //   value: bigint | null
+  // ): Promise<Hex> => {
+  //   try {
+  //     let name: string;
+  //     switch (functionName) {
+  //       case "register":
+  //       case "renew":
+  //         name = functionName;
+  //         break;
+  //       case "transfer":
+  //         name = "transferDomain";
+  //         break;
+  //       default:
+  //         throw new Error("Invalid function name: " + functionName);
+  //     }
+  //     if (!abstractClient) throw new Error("Abstract client not initialized");
+  //     let transaction: Hex;
+  //     if (value) {
+  //       transaction = await abstractClient.writeContract({
+  //         address,
+  //         abi: NameServiceABI,
+  //         functionName: name,
+  //         args: args.map((arg) =>
+  //           typeof arg === "string" ? arg.toLowerCase() : arg
+  //         ),
+  //         value,
+  //       });
+  //     } else {
+  //       transaction = await abstractClient.writeContract({
+  //         address,
+  //         abi: NameServiceABI,
+  //         functionName: name,
+  //         args: args.map((arg) =>
+  //           typeof arg === "string" ? arg.toLowerCase() : arg
+  //         ),
+  //       });
+  //     }
+  //     return transaction as Hex;
+  //   } catch (err) {
+  //     console.error("Error sending transaction:", err);
+  //     throw err;
+  //   }
+  // };
 
   // Name Service functions
+
   const registerDomain = async (
     name: string,
     tld: string,
@@ -289,13 +290,11 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       if (!contract)
         throw new Error("Name service contract not initialized for " + tld);
       const price = getDomainPrice(name, years);
-      const hex = await sendTransaction(
-        "register",
-        [name, BigInt(years)],
-        contract.address,
-        parseEther(price.toString())
-      );
-      return hex as string;
+      const logs = await contract.write.register([name, BigInt(years)], {
+        value: parseEther(price.toString()),
+      });
+      console.log(logs);
+      return logs as string;
     } catch (err) {
       console.error("Error registering domain:", err);
       throw err;
@@ -312,13 +311,11 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       if (!contract)
         throw new Error("Name service contract not initialized for " + tld);
       const price = getDomainPrice(name, years);
-      const hex = await sendTransaction(
-        "renew",
-        [name, BigInt(years)],
-        contract.address,
-        parseEther(price.toString())
-      );
-      return hex as string;
+      const logs = await contract.write.renew([name, BigInt(years)], {
+        value: parseEther(price.toString()),
+      });
+      console.log(logs);
+      return logs as string;
     } catch (err) {
       console.error("Error renewing domain:", err);
       throw err;
@@ -334,13 +331,9 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       const contract = getNameServiceContract(tld);
       if (!contract)
         throw new Error("Name service contract not initialized for " + tld);
-      const hex = await sendTransaction(
-        "transfer",
-        [name, to],
-        contract.address,
-        null
-      );
-      return hex as string;
+      const logs = await contract.write.transfer([name, to]);
+      console.log(logs);
+      return logs as string;
     } catch (err) {
       console.error("Error transferring domain:", err);
       throw err;
