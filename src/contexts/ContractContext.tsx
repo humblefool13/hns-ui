@@ -17,7 +17,7 @@ import HNSManagerABI from "../contracts/HNSManager.json";
 import NameServiceABI from "../contracts/NameService.json";
 
 // Contract addresses (you can make these configurable)
-export const HNS_MANAGER_ADDRESS = "0xE1537A9B23a39A8b0DB4ad1Ff41F929a1CCB1AD9";
+export const HNS_MANAGER_ADDRESS = process.env.NEXT_PUBLIC_CA;
 
 // Types for contract interactions
 export interface DomainInfo {
@@ -38,7 +38,9 @@ export interface ContractContextType {
 
   // HNS Manager functions
   getRegisteredTLDs: () => Promise<string[] | undefined>;
+  getRegisteredTLDsRPC: () => Promise<string[] | undefined>;
   resolveDomain: (name: string, tld: string) => Promise<DomainInfo | null>;
+  resolveDomainRPC: (name: string, tld: string) => Promise<DomainInfo | null>;
   reverseLookup: (address: Address) => Promise<string>;
   getAddressDomains: (address: Address) => Promise<string[]>;
   getMainDomain: (address: Address) => Promise<string>;
@@ -140,6 +142,37 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       console.error("Error getting registered TLDs:", err);
       throw err;
     }
+  };
+
+  const getRegisteredTLDsRPC = async (): Promise<string[] | undefined> => {
+    const res = await fetch("/api/hns/tlds", { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to fetch TLDs");
+    const data = (await res.json()) as { tlds: string[] };
+    return data.tlds ?? [];
+  };
+
+  const resolveDomainRPC = async (
+    name: string,
+    tld: string
+  ): Promise<DomainInfo | null> => {
+    const res = await fetch("/api/hns/resolve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, tld }),
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      owner: Address;
+      expiration: string;
+      nftAddress: Address;
+      tokenId: string;
+    };
+    return {
+      owner: data.owner,
+      expiration: BigInt(data.expiration),
+      nftAddress: data.nftAddress,
+      tokenId: BigInt(data.tokenId),
+    };
   };
 
   const resolveDomain = async (
@@ -408,7 +441,9 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     isLoading,
     error,
     getRegisteredTLDs,
+    getRegisteredTLDsRPC,
     resolveDomain,
+    resolveDomainRPC,
     reverseLookup,
     getAddressDomains,
     getMainDomain,

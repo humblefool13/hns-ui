@@ -40,9 +40,8 @@ export default function SearchSection() {
   }>(null);
 
   const {
-    hnsManagerContract,
-    getRegisteredTLDs,
-    resolveDomain,
+    getRegisteredTLDsRPC,
+    resolveDomainRPC,
     getDomainPrice,
     registerDomain,
     isConnected,
@@ -59,18 +58,15 @@ export default function SearchSection() {
   const explorerTxUrl = tx ? `https://sepolia.abscan.org/tx/${tx}` : null;
   const shortTx = tx ? `${tx.slice(0, 10)}…${tx.slice(-6)}` : null;
 
+  // Load available TLDs on component mount (works even if not connected via fallback client)
   useEffect(() => {
-    if (isConnected && hnsManagerContract) {
-      loadTLDs();
-    }
-  }, [isConnected, hnsManagerContract]);
-
-  const loadTLDs = async () => {
-    if (availableTLDs.length) return;
-    const tlds = await getRegisteredTLDs();
-    setAvailableTLDs(tlds ?? []);
-    setIsLoadingTLDs(false);
-  };
+    const loadTLDs = async () => {
+      const tlds = await getRegisteredTLDsRPC();
+      setAvailableTLDs(tlds || []);
+      setIsLoadingTLDs(false);
+    };
+    loadTLDs();
+  }, []);
 
   // Parse domain input
   const parsed = useMemo(() => {
@@ -161,7 +157,7 @@ export default function SearchSection() {
 
     try {
       const { name, tld } = parsed;
-      const domainInfo = await resolveDomain(name, tld);
+      const domainInfo = await resolveDomainRPC(name, tld);
       if (
         domainInfo &&
         domainInfo.owner !== "0x0000000000000000000000000000000000000000" &&
@@ -390,8 +386,7 @@ export default function SearchSection() {
                 !domainName.trim() ||
                 !validation.isValid ||
                 isSearching ||
-                isLoading ||
-                !isConnected
+                isLoading
               }
               whileHover={{ scale: isSearching ? 1 : 1.05 }}
               whileTap={{ scale: isSearching ? 1 : 0.95 }}
@@ -402,10 +397,8 @@ export default function SearchSection() {
                   <Loader2 className="animate-spin mr-2" size={20} />
                   Searching…
                 </>
-              ) : isConnected ? (
-                "Check Availability"
               ) : (
-                "Connect Wallet"
+                "Check Availability"
               )}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
