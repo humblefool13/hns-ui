@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const client = createPublicClient({ transport: http(rpcUrl) });
     const contract = getContract({
       address: HNS_MANAGER_ADDRESS as Address,
-      abi: HNSManagerABI.abi,
+      abi: HNSManagerABI,
       client,
     }) as any;
 

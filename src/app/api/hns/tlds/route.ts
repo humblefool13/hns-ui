@@ -13,7 +13,7 @@ export async function GET() {
     const client = createPublicClient({ transport: http(rpcUrl) });
     const contract = getContract({
       address: HNS_MANAGER_ADDRESS as Address,
-      abi: HNSManagerABI.abi,
+      abi: HNSManagerABI,
       client,
     }) as any;
 
@@ -32,7 +32,7 @@ export async function GET() {
         break;
       }
     }
-
+    
     return NextResponse.json({ tlds });
   } catch (e) {
     return NextResponse.json({ error: "Failed to fetch TLDs" }, { status: 500 });
