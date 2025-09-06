@@ -41,12 +41,12 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
     resolveDomain,
     address,
     isConnected,
-    isLoading,
+    hnsManagerContract,
   } = useContract();
   const { login, logout } = useLoginWithAbstract();
 
   // State for blockchain data
-  const [mainDomain, setMainDomain] = useState<string>("");
+  const [mainDomain, setMainDomain] = useState<string | null>(null);
   const [totalOwned, setTotalOwned] = useState<number>(0);
   const [expiringSoon, setExpiringSoon] = useState<number>(0);
   const [isLoadingData, setIsLoadingData] = useState(false);
@@ -54,17 +54,20 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
   // Fetch blockchain data when connected
   useEffect(() => {
     const fetchBlockchainData = async () => {
-      if (!isConnected || !address || isLoading) return;
+      if (!isConnected || !address || !hnsManagerContract) return;
 
       setIsLoadingData(true);
       try {
-        // Get main domain
         try {
           const main = await getMainDomain(address);
-          setMainDomain(main || "");
+          if (main && main.trim() !== "") {
+            setMainDomain(main);
+          } else {
+            setMainDomain(null);
+          }
         } catch (error) {
           console.log("No main domain found");
-          setMainDomain("");
+          setMainDomain(null);
         }
 
         // Get all domains for the address
@@ -75,7 +78,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
           // Check which domains are expiring within 1 month
           let expiringCount = 0;
           const oneMonthFromNow = BigInt(
-            Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60
+            Math.floor(Date.now() / 1000) + 31 * 24 * 60 * 60
           ); // 30 days in seconds
 
           for (const domain of domains) {
@@ -109,16 +112,8 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
         setIsLoadingData(false);
       }
     };
-
     fetchBlockchainData();
-  }, [
-    isConnected,
-    address,
-    isLoading,
-    getMainDomain,
-    getAddressDomains,
-    resolveDomain,
-  ]);
+  }, [isConnected, address, hnsManagerContract]);
 
   // Don't render theme-dependent content until mounted to prevent hydration mismatch
   if (!mounted) {

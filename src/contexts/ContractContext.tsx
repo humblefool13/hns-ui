@@ -37,8 +37,10 @@ export interface ContractContextType {
   error: string | null;
 
   // HNS Manager functions
-  getRegisteredTLDs: () => Promise<string[]>;
+  getRegisteredTLDs: () => Promise<string[] | undefined>;
+  getRegisteredTLDsRPC: () => Promise<string[] | undefined>;
   resolveDomain: (name: string, tld: string) => Promise<DomainInfo | null>;
+  resolveDomainRPC: (name: string, tld: string) => Promise<DomainInfo | null>;
   reverseLookup: (address: Address) => Promise<string>;
   getAddressDomains: (address: Address) => Promise<string[]>;
   getMainDomain: (address: Address) => Promise<string>;
@@ -89,7 +91,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
 
     return getContract({
       address: HNS_MANAGER_ADDRESS as Address,
-      abi: HNSManagerABI.abi,
+      abi: HNSManagerABI,
       client: effectiveClient,
     }) as any;
   }, [abstractClient]);
@@ -103,9 +105,8 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
   };
 
   // HNS Manager read functions
-  const getRegisteredTLDs = async (): Promise<string[]> => {
+  const getRegisteredTLDs = async (): Promise<string[] | undefined> => {
     try {
-      // If wallet-connected client exists, read directly
       if (hnsManagerContract) {
         const tlds: string[] = [];
         let index = 0;
@@ -124,7 +125,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
                   tld,
                   getContract({
                     address: address,
-                    abi: NameServiceABI.abi,
+                    abi: NameServiceABI,
                     client: abstractClient as any,
                   }) as any
                 );
@@ -139,16 +140,17 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
         }
         return tlds;
       }
-
-      // Otherwise, use server API route
-      const res = await fetch("/api/hns/tlds", { cache: "no-store" });
-      if (!res.ok) throw new Error("Failed to fetch TLDs");
-      const data = (await res.json()) as { tlds: string[] };
-      return data.tlds ?? [];
     } catch (err) {
       console.error("Error getting registered TLDs:", err);
       throw err;
     }
+  };
+
+  const getRegisteredTLDsRPC = async (): Promise<string[] | undefined> => {
+    const res = await fetch("/api/hns/tlds", { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to fetch TLDs");
+    const data = (await res.json()) as { tlds: string[] };
+    return data.tlds ?? [];
   };
 
   const resolveDomain = async (
@@ -168,29 +170,35 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
           tokenId: result[3],
         };
       }
-
-      const res = await fetch("/api/hns/resolve", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, tld }),
-      });
-      if (!res.ok) return null;
-      const data = (await res.json()) as {
-        owner: Address;
-        expiration: string;
-        nftAddress: Address;
-        tokenId: string;
-      };
-      return {
-        owner: data.owner,
-        expiration: BigInt(data.expiration),
-        nftAddress: data.nftAddress,
-        tokenId: BigInt(data.tokenId),
-      };
+      return null;
     } catch (err) {
       console.error("Error resolving domain:", err);
       return null;
     }
+  };
+
+  const resolveDomainRPC = async (
+    name: string,
+    tld: string
+  ): Promise<DomainInfo | null> => {
+    const res = await fetch("/api/hns/resolve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, tld }),
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      owner: Address;
+      expiration: string;
+      nftAddress: Address;
+      tokenId: string;
+    };
+    return {
+      owner: data.owner,
+      expiration: BigInt(data.expiration),
+      nftAddress: data.nftAddress,
+      tokenId: BigInt(data.tokenId),
+    };
   };
 
   const reverseLookup = async (address: Address): Promise<string> => {
@@ -210,7 +218,6 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     if (!hnsManagerContract) {
       throw new Error("HNS Manager contract not initialized");
     }
-
     try {
       const domains: string[] = [];
       let index = 0;
@@ -243,12 +250,18 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     if (!hnsManagerContract) {
       throw new Error("HNS Manager contract not initialized");
     }
-
+    let result: string = "";
     try {
-      return (await hnsManagerContract.read.mainDomain([address])) as string;
+      result = await hnsManagerContract.read.mainDomain([address]);
+      if (result && result !== "" && result.length > 0) {
+        return result;
+      }
+      return "";
     } catch (err) {
-      console.error("Error getting main domain:", err);
-      throw err;
+      if ((err as Error).name !== "ContractFunctionExecutionError") {
+        throw err;
+      }
+      return "";
     }
   };
 
@@ -276,7 +289,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       if (value) {
         transaction = await abstractClient.writeContract({
           address,
-          abi: NameServiceABI.abi,
+          abi: NameServiceABI,
           functionName: name,
           args: args.map((arg) =>
             typeof arg === "string" ? arg.toLowerCase() : arg
@@ -286,7 +299,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       } else {
         transaction = await abstractClient.writeContract({
           address,
-          abi: NameServiceABI.abi,
+          abi: NameServiceABI,
           functionName: name,
           args: args.map((arg) =>
             typeof arg === "string" ? arg.toLowerCase() : arg
@@ -428,11 +441,14 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
 
     if (hnsManagerContract) {
       initializeContracts();
-    } else if (!isConnected) {
+    }
+    /*
+    else if (!isConnected) {
       setIsLoading(false);
     } else {
       setIsLoading(true);
     }
+      */
   }, [hnsManagerContract]);
 
   const contextValue: ContractContextType = {
@@ -441,7 +457,9 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     isLoading,
     error,
     getRegisteredTLDs,
+    getRegisteredTLDsRPC,
     resolveDomain,
+    resolveDomainRPC,
     reverseLookup,
     getAddressDomains,
     getMainDomain,
