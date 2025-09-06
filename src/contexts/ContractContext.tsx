@@ -38,9 +38,7 @@ export interface ContractContextType {
 
   // HNS Manager functions
   getRegisteredTLDs: () => Promise<string[] | undefined>;
-  getRegisteredTLDsRPC: () => Promise<string[] | undefined>;
   resolveDomain: (name: string, tld: string) => Promise<DomainInfo | null>;
-  resolveDomainRPC: (name: string, tld: string) => Promise<DomainInfo | null>;
   reverseLookup: (address: Address) => Promise<string>;
   getAddressDomains: (address: Address) => Promise<string[]>;
   getMainDomain: (address: Address) => Promise<string>;
@@ -144,13 +142,6 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     }
   };
 
-  const getRegisteredTLDsRPC = async (): Promise<string[] | undefined> => {
-    const res = await fetch("/api/hns/tlds", { cache: "no-store" });
-    if (!res.ok) throw new Error("Failed to fetch TLDs");
-    const data = (await res.json()) as { tlds: string[] };
-    return data.tlds ?? [];
-  };
-
   const resolveDomain = async (
     name: string,
     tld: string
@@ -173,30 +164,6 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       console.error("Error resolving domain:", err);
       return null;
     }
-  };
-
-  const resolveDomainRPC = async (
-    name: string,
-    tld: string
-  ): Promise<DomainInfo | null> => {
-    const res = await fetch("/api/hns/resolve", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, tld }),
-    });
-    if (!res.ok) return null;
-    const data = (await res.json()) as {
-      owner: Address;
-      expiration: string;
-      nftAddress: Address;
-      tokenId: string;
-    };
-    return {
-      owner: data.owner,
-      expiration: BigInt(data.expiration),
-      nftAddress: data.nftAddress,
-      tokenId: BigInt(data.tokenId),
-    };
   };
 
   const reverseLookup = async (address: Address): Promise<string> => {
@@ -448,9 +415,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     isLoading,
     error,
     getRegisteredTLDs,
-    getRegisteredTLDsRPC,
     resolveDomain,
-    resolveDomainRPC,
     reverseLookup,
     getAddressDomains,
     getMainDomain,
