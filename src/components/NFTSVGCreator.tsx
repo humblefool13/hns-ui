@@ -7,7 +7,7 @@ interface NFTSVGCreatorProps {
 export default function NFTSVGCreator({
   name,
   tld,
-  className = "",
+  className = ""
 }: NFTSVGCreatorProps) {
   return (
     <svg
@@ -44,7 +44,7 @@ export default function NFTSVGCreator({
           fontFamily: "Arial-BoldMT,Arial",
           fontSize: "32px",
           fontWeight: "700",
-          isolation: "isolate",
+          isolation: "isolate"
         }}
       >
         <tspan x="0" y="0">
@@ -145,7 +145,7 @@ export default function NFTSVGCreator({
           fontSize: "32px",
           fontWeight: "700",
           isolation: "isolate",
-          fill: "#fff",
+          fill: "#fff"
         }}
       >
         <tspan x="0" y="0">

@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useState,
   useMemo,
-  ReactNode,
+  ReactNode
 } from "react";
 import { getContract, type Address, parseEther } from "viem";
 import { useAccount } from "wagmi";
@@ -76,7 +76,7 @@ interface ContractProviderProps {
 }
 
 export const ContractProvider: React.FC<ContractProviderProps> = ({
-  children,
+  children
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -91,7 +91,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     return getContract({
       address: HNS_MANAGER_ADDRESS as Address,
       abi: HNSManagerABI,
-      client: effectiveClient,
+      client: effectiveClient
     }) as any;
   }, [abstractClient]);
 
@@ -113,12 +113,12 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       while (true) {
         try {
           const tld = (await hnsManagerContract.read.registeredTLDs([
-            BigInt(index),
+            BigInt(index)
           ])) as string;
           if (tld && tld !== "") {
             tlds.push(tld);
             const address = (await hnsManagerContract.read.tldContracts([
-              tld,
+              tld
             ])) as Address;
             if (!nameServiceContracts.has(tld)) {
               nameServiceContracts.set(
@@ -126,7 +126,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
                 getContract({
                   address: address,
                   abi: NameServiceABI,
-                  client: abstractClient as any,
+                  client: abstractClient as any
                 }) as any
               );
             }
@@ -159,7 +159,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     const res = await fetch("/api/hns/resolve", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, tld }),
+      body: JSON.stringify({ name, tld })
     });
     if (!res.ok) return null;
     const data = (await res.json()) as {
@@ -172,7 +172,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       owner: data.owner,
       expiration: BigInt(data.expiration),
       nftAddress: data.nftAddress,
-      tokenId: BigInt(data.tokenId),
+      tokenId: BigInt(data.tokenId)
     };
   };
 
@@ -186,13 +186,13 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     try {
       const result = (await hnsManagerContract.read.resolve([
         name.toLowerCase(),
-        tld.toLowerCase(),
+        tld.toLowerCase()
       ])) as [Address, bigint, Address, bigint];
       return {
         owner: result[0],
         expiration: result[1],
         nftAddress: result[2],
-        tokenId: result[3],
+        tokenId: result[3]
       };
     } catch (err) {
       console.error("Error resolving domain:", err);
@@ -225,7 +225,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
         try {
           const domain = (await hnsManagerContract.read.addressToDomains([
             address,
-            BigInt(index),
+            BigInt(index)
           ])) as string;
           if (domain && domain !== "") {
             domains.push(domain);
@@ -339,7 +339,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
         throw new Error("Name service contract not initialized for " + tld);
       const price = getDomainPrice(name, years);
       const logs = await contract.write.register([name, BigInt(years)], {
-        value: parseEther(price.toString()),
+        value: parseEther(price.toString())
       });
       console.log(logs);
       return logs as string;
@@ -360,7 +360,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
         throw new Error("Name service contract not initialized for " + tld);
       const price = getDomainPrice(name, years);
       const logs = await contract.write.renew([name, BigInt(years)], {
-        value: parseEther(price.toString()),
+        value: parseEther(price.toString())
       });
       console.log(logs);
       return logs as string;
@@ -470,7 +470,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     getDomainExpiration,
     getNameServiceContract,
     isConnected,
-    address,
+    address
   };
 
   return (

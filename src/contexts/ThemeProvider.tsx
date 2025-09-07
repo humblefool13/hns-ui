@@ -22,28 +22,23 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const savedTheme = localStorage.getItem("theme") as Theme;
     if (savedTheme) {
       setTheme(savedTheme);
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setTheme("dark");
     }
+    // Always default to light mode if no saved preference
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
 
-    // Update document class and body class
+    // Update document class for Tailwind dark mode
     const root = document.documentElement;
-    const body = document.body;
 
     // Remove all theme classes first
     root.classList.remove("dark", "light");
-    body.classList.remove("dark", "light");
 
     if (theme === "dark") {
       root.classList.add("dark");
-      body.classList.add("dark");
     } else {
       root.classList.add("light");
-      body.classList.add("light");
     }
 
     localStorage.setItem("theme", theme);

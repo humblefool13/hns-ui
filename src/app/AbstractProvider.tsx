@@ -5,7 +5,7 @@ import { abstractTestnet, abstract } from "viem/chains";
 
 const appId = "cmeeq3d5u00l6kz0bzkkklsw3";
 export default function AbstractProvider({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
