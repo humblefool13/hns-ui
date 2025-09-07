@@ -9,11 +9,12 @@ import {
   Send,
   Star,
   Wallet,
-  RotateCcw,
+  RotateCcw
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useContract } from "../contexts/ContractContext";
 import NFTSVGCreator from "./NFTSVGCreator";
+import { useLoginWithAbstract } from "@abstract-foundation/agw-react";
 
 interface DomainData {
   name: string;
@@ -23,7 +24,7 @@ interface DomainData {
 }
 
 export default function ManagePage({
-  changeToSearch,
+  changeToSearch
 }: {
   changeToSearch: () => void;
 }) {
@@ -36,8 +37,7 @@ export default function ManagePage({
     transferDomain,
     renewDomain,
     getDomainPrice,
-    setMainDomain,
-    isLoading,
+    setMainDomain
   } = useContract();
 
   const [domains, setDomains] = useState<DomainData[]>([]);
@@ -51,6 +51,7 @@ export default function ManagePage({
   const [showRenewModal, setShowRenewModal] = useState(false);
   const [renewPrice, setRenewPrice] = useState(0);
   const [hoveredDomain, setHoveredDomain] = useState<string | null>(null);
+  const { login } = useLoginWithAbstract();
 
   // Calculate stats
   const totalDomains = domains.length;
@@ -80,7 +81,7 @@ export default function ManagePage({
               name: domainName,
               tld,
               expiration,
-              isMain: domainName === mainDomainName,
+              isMain: domainName === mainDomainName
             });
           } catch (error) {
             console.error(`Error getting expiration for ${domainName}:`, error);
@@ -163,26 +164,26 @@ export default function ManagePage({
   };
 
   return (
-    <div className="min-h-screen p-6 md:ml-96 md:mr-6">
+    <div className="min-h-screen p-6 md:mr-6 md:ml-96">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-6xl mx-auto space-y-6"
+        className="mx-auto max-w-6xl space-y-6"
       >
         {/* Page Header */}
-        <div className="glass-card p-8">
-          <div className="flex items-center justify-between mb-6">
+        <div className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 p-8 shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+          <div className="mb-6 flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-foreground mb-2">
+              <h1 className="mb-2 text-4xl font-bold text-black dark:text-white">
                 Manage Your HotDog Names
               </h1>
-              <p className="text-gray-600 dark:text-gray-300 text-lg">
+              <p className="text-lg text-gray-600 dark:text-gray-300">
                 Control and configure your Web3 identity portfolio
               </p>
             </div>
             <button
-              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center gap-2"
+              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:from-green-600 hover:to-green-700 hover:shadow-lg"
               onClick={changeToSearch}
             >
               <Plus size={20} />
@@ -191,17 +192,17 @@ export default function ManagePage({
           </div>
 
           {/* Quick Stats - Only Total and Expiring Soon */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="text-center p-4 border border-gray-200 dark:border-gray-600 bg-green-50 dark:bg-green-900/20 rounded-xl hover:border-green-500 duration-300">
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400 mb-1">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="rounded-xl border border-gray-300 bg-green-100 p-4 text-center duration-300 hover:border-green-500 dark:border-gray-600 dark:bg-green-900/20">
+              <div className="mb-1 text-2xl font-bold text-green-600 dark:text-green-400">
                 {loading ? "..." : totalDomains}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-300">
                 Total Names
               </div>
             </div>
-            <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-green-500 duration-300">
-              <div className="text-2xl font-bold text-yellow-800 dark:text-yellow-400 mb-1">
+            <div className="rounded-xl border border-gray-300 bg-yellow-100 p-4 text-center duration-300 hover:border-green-500 dark:border-gray-600 dark:bg-yellow-900/20">
+              <div className="mb-1 text-2xl font-bold text-yellow-800 dark:text-yellow-400">
                 {loading ? "..." : expiringSoon}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-300">
@@ -213,15 +214,18 @@ export default function ManagePage({
 
         {/* Connect Wallet Section */}
         {!isConnected && (
-          <div className="glass-card p-8 text-center">
-            <Wallet size={64} className="mx-auto text-gray-400 mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-4">
+          <div className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 p-8 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+            <Wallet size={64} className="mx-auto mb-4 text-gray-400" />
+            <h2 className="mb-4 text-2xl font-bold text-black dark:text-white">
               Connect Your Wallet
             </h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
+            <p className="mb-6 text-gray-600 dark:text-gray-300">
               Connect your wallet to view and manage your HotDog names
             </p>
-            <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center gap-2 mx-auto">
+            <button
+              className="mx-auto flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-8 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:from-green-600 hover:to-green-700 hover:shadow-lg"
+              onClick={login}
+            >
               <Wallet size={20} />
               Connect Wallet
             </button>
@@ -230,16 +234,16 @@ export default function ManagePage({
 
         {/* Owned Domains */}
         {isConnected && (
-          <div className="glass-card p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
-                <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
-                  <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+          <div className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 p-8 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="flex items-center gap-3 text-2xl font-bold text-black dark:text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-green-100 dark:bg-green-800">
+                  <div className="h-4 w-4 rounded-full bg-green-500 dark:bg-green-400"></div>
                 </div>
                 Your HotDog Names
               </h2>
               <button
-                className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-green-500 transition-colors duration-300"
+                className="flex items-center gap-2 text-gray-600 transition-colors duration-300 hover:text-green-500 dark:text-gray-400"
                 onClick={loadDomains}
                 disabled={loading}
               >
@@ -252,14 +256,14 @@ export default function ManagePage({
             </div>
 
             {loading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto"></div>
-                <p className="text-gray-600 dark:text-gray-300 mt-2">
+              <div className="py-8 text-center">
+                <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-green-500"></div>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
                   Loading domains...
                 </p>
               </div>
             ) : domains.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="py-8 text-center">
                 <p className="text-gray-600 dark:text-gray-300">
                   No domains found
                 </p>
@@ -272,28 +276,28 @@ export default function ManagePage({
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-green-500 transition-all duration-300"
+                    className="rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 dark:border-gray-700"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div
-                          className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center relative group cursor-pointer"
+                          className="group relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/30"
                           onMouseEnter={() => setHoveredDomain(domain.name)}
                           onMouseLeave={() => setHoveredDomain(null)}
                         >
                           <NFTSVGCreator
                             name={domain.name.split(".")[0]}
                             tld={domain.tld}
-                            className="w-8 h-8"
+                            className="h-full w-full"
                           />
                           {/* Hover Preview */}
                           {hoveredDomain === domain.name && (
-                            <div className="absolute -top-2 -left-2 z-50 pointer-events-none">
-                              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-600 p-4 transform scale-150">
+                            <div className="pointer-events-none absolute -top-2 -left-2 z-50">
+                              <div className="scale-150 transform rounded-lg border border-gray-200 bg-white p-4 shadow-2xl dark:border-gray-600 dark:bg-gray-800">
                                 <NFTSVGCreator
                                   name={domain.name.split(".")[0]}
                                   tld={domain.tld}
-                                  className="w-32 h-32"
+                                  className="h-28 w-28"
                                 />
                               </div>
                             </div>
@@ -301,11 +305,11 @@ export default function ManagePage({
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className="text-xl font-bold text-foreground font-mono">
+                            <h3 className="font-mono text-xl font-bold text-black dark:text-white">
                               {domain.name}
                             </h3>
                             {domain.isMain && (
-                              <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-xs font-semibold flex items-center gap-1">
+                              <span className="flex items-center gap-1 rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800 dark:bg-blue-900/30 dark:text-blue-200">
                                 <Star size={12} />
                                 Main
                               </span>
@@ -313,10 +317,10 @@ export default function ManagePage({
                           </div>
                           <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs ${
+                              className={`rounded-full px-2 py-1 text-xs ${
                                 isExpiringSoon(domain.expiration)
-                                  ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200"
-                                  : "bg-green-200 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                  ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200"
+                                  : "bg-green-200 text-green-800 dark:bg-green-900/30 dark:text-green-200"
                               }`}
                             >
                               {isExpiringSoon(domain.expiration)
@@ -332,10 +336,12 @@ export default function ManagePage({
 
                       <div className="flex items-center gap-3">
                         <button
-                          className="p-2 text-gray-600 dark:text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-all duration-300"
+                          className="rounded-lg p-2 text-gray-600 transition-all duration-300 hover:bg-green-50 hover:text-green-500 dark:text-gray-400 dark:hover:bg-green-900/20"
                           onClick={() => {
                             setRenewDomainName(domain.name);
-                            setRenewPrice(calculateRenewPrice(domain.name, 1));
+                            setRenewPrice(
+                              calculateRenewPrice(domain.name, renewYears)
+                            );
                             setShowRenewModal(true);
                           }}
                           title="Renew Domain"
@@ -343,7 +349,7 @@ export default function ManagePage({
                           <RotateCcw size={16} />
                         </button>
                         <button
-                          className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-300"
+                          className="rounded-lg p-2 text-gray-600 transition-all duration-300 hover:bg-red-50 hover:text-red-500 dark:text-gray-400 dark:hover:bg-red-900/20"
                           onClick={() => {
                             setTransferDomainName(domain.name);
                             setShowTransferModal(true);
@@ -353,10 +359,10 @@ export default function ManagePage({
                           <Send size={16} />
                         </button>
                         <button
-                          className={`p-2 rounded-lg transition-all duration-300 ${
+                          className={`rounded-lg p-2 transition-all duration-300 ${
                             domain.isMain
-                              ? "text-blue-500 bg-blue-50 dark:bg-blue-900/20 cursor-not-allowed"
-                              : "text-gray-600 dark:text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                              ? "cursor-not-allowed bg-blue-50 text-blue-500 dark:bg-blue-900/20"
+                              : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 dark:text-gray-400 dark:hover:bg-blue-900/20"
                           }`}
                           onClick={() =>
                             !domain.isMain && handleSetMainDomain(domain.name)
@@ -384,25 +390,25 @@ export default function ManagePage({
 
         {/* Transfer Modal */}
         {showTransferModal && (
-          <div className="fixed inset-0 bg-black/50 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="bg-blue-900 dark:bg-blue-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-6 max-w-md w-full mx-4">
-              <h3 className="text-xl font-bold text-gray-600 dark:text-gray-300 mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm dark:bg-black/50">
+            <div className="mx-4 w-full max-w-md rounded-xl border border-gray-300 bg-gray-100 p-6 shadow-2xl dark:border-gray-700/50 dark:bg-[#1e1e1e]">
+              <h3 className="mb-4 text-xl font-bold text-black dark:text-white">
                 Transfer Domain
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Domain
                   </label>
                   <input
                     type="text"
                     value={transferDomainName}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+                    className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-gray-500 dark:border-gray-600 dark:bg-black dark:text-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Recipient Address
                   </label>
                   <input
@@ -410,20 +416,20 @@ export default function ManagePage({
                     value={transferAddress}
                     onChange={(e) => setTransferAddress(e.target.value)}
                     placeholder="0x..."
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-blue-50 dark:bg-blue-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-transparent focus:ring-2 focus:ring-green-500 dark:border-gray-600 dark:bg-black dark:text-white dark:placeholder-gray-400"
                   />
                 </div>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowTransferModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleTransfer}
                     disabled={!transferAddress}
-                    className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white rounded-lg transition-colors"
+                    className="flex-1 rounded-lg bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600 disabled:bg-gray-400"
                   >
                     Transfer
                   </button>
@@ -435,25 +441,25 @@ export default function ManagePage({
 
         {/* Renew Modal */}
         {showRenewModal && (
-          <div className="fixed inset-0 bg-black/50 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="bg-blue-50 dark:bg-blue-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl p-6 max-w-md w-full mx-4">
-              <h3 className="text-xl font-bold text-gray-600 dark:text-gray-300 mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm dark:bg-black/50">
+            <div className="mx-4 w-full max-w-md rounded-xl border border-gray-300 bg-gray-100 p-6 shadow-2xl dark:border-gray-700/50 dark:bg-[#1e1e1e]">
+              <h3 className="mb-4 text-xl font-bold text-black dark:text-white">
                 Renew Domain
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Domain
                   </label>
                   <input
                     type="text"
                     value={renewDomainName}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+                    className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-gray-500 dark:border-gray-600 dark:bg-black dark:text-gray-400"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Years to Renews
                   </label>
                   <select
@@ -465,7 +471,7 @@ export default function ManagePage({
                         calculateRenewPrice(renewDomainName, years)
                       );
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-blue-50 dark:bg-blue-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-green-500 dark:border-gray-600 dark:bg-black dark:text-white"
                   >
                     {[1, 2, 3, 4, 5, 10].map((year) => (
                       <option key={year} value={year}>
@@ -474,8 +480,8 @@ export default function ManagePage({
                     ))}
                   </select>
                 </div>
-                <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <div className="flex justify-between items-center">
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-black">
+                  <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600 dark:text-gray-300">
                       Total Cost:
                     </span>
@@ -487,13 +493,13 @@ export default function ManagePage({
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowRenewModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleRenew}
-                    className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+                    className="flex-1 rounded-lg bg-green-500 px-4 py-2 text-white transition-colors hover:bg-green-600"
                   >
                     Renew Domain
                   </button>

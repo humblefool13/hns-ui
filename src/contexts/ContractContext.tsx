@@ -379,7 +379,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       const contract = getNameServiceContract(tld);
       if (!contract)
         throw new Error("Name service contract not initialized for " + tld);
-      const logs = await contract.write.transfer([name, to]);
+      const logs = await contract.write.transferDomain([name, to]);
       console.log(logs);
       return logs as string;
     } catch (err) {
