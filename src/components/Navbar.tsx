@@ -8,10 +8,6 @@ import {
   Sun,
   Moon,
   Grid,
-  MessageCircle,
-  Send,
-  Sailboat,
-  Plus,
   Wallet,
   Globe,
   LogOut,
@@ -394,7 +390,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 p-2 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 p-2 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   key={item.name}

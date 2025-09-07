@@ -7,7 +7,7 @@ import {
   Link,
   RefreshCw,
   Clipboard,
-  Check,
+  Check
 } from "lucide-react";
 import { HNS_MANAGER_ADDRESS } from "../contexts/ContractContext";
 import { useState } from "react";
@@ -26,20 +26,20 @@ function CodeBlock({ code }: { code: string }) {
   }
 
   return (
-    <div className="group relative bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+    <div className="group relative rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
       <button
         aria-label={copied ? "Copied" : "Copy"}
         onClick={onCopy}
         disabled={copied}
-        className="absolute right-3 top-3 inline-flex items-center justify-center h-8 w-8 rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-100/50 text-gray-700 shadow-sm dark:border-gray-700 dark:bg-gray-900/50 dark:hover:bg-gray-900 dark:text-gray-300 transition opacity-0 group-hover:opacity-100"
+        className="absolute top-3 right-3 inline-flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 bg-gray-100 text-gray-700 opacity-0 shadow-sm transition group-hover:opacity-100 hover:bg-gray-100/50 dark:border-gray-700 dark:bg-gray-900/50 dark:text-gray-300 dark:hover:bg-gray-900"
       >
         {copied ? (
           <Check className="h-4 w-4 text-green-600 hover:cursor-not-allowed" />
         ) : (
-          <Clipboard className="h-4 w-4 text-gray-700 dark:text-gray-300 hover:cursor-pointer" />
+          <Clipboard className="h-4 w-4 text-gray-700 hover:cursor-pointer dark:text-gray-300" />
         )}
       </button>
-      <pre className="text-xs whitespace-pre-wrap break-words overflow-x-auto text-gray-800 dark:text-gray-200">
+      <pre className="overflow-x-auto text-xs break-words whitespace-pre-wrap text-gray-800 dark:text-gray-200">
         {code}
       </pre>
     </div>
@@ -48,15 +48,15 @@ function CodeBlock({ code }: { code: string }) {
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen p-6 md:ml-96 md:mr-6">
+    <div className="min-h-screen p-6 md:mr-6 md:ml-96">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-6xl mx-auto space-y-6"
+        className="mx-auto max-w-6xl space-y-6"
       >
-        <div className="glass-card p-8">
-          <h1 className="text-4xl font-bold text-foreground mb-3">
+        <div className="hover:border-dim-green dark:hover:border-bright-green rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+          <h1 className="mb-3 text-4xl font-bold text-black dark:text-white">
             HNS Developer Documentation
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
@@ -68,22 +68,22 @@ export default function DocsPage() {
         </div>
 
         {/* Architecture Overview */}
-        <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300 glass-card">
+        <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
           <div className="flex items-center gap-3">
             <FileText className="text-green-500" />
-            <h2 className="text-2xl font-semibold text-foreground">
+            <h2 className="text-2xl font-semibold text-black dark:text-white">
               Architecture Overview
             </h2>
           </div>
-          <p className="text-gray-700 dark:text-gray-300">
+          <p className="text-black dark:text-gray-300">
             HNS uses a manager-based architecture. A single manager contract
             maintains the registry of top-level domains (TLDs) and
             deploys/records a dedicated NameService contract for each TLD.
             Public dapps interact with public functions only; any restricted
             admin flows are intentionally excluded here.
           </p>
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800/40 dark:bg-blue-900/20">
+            <h3 className="mb-2 text-lg font-semibold text-blue-900 dark:text-blue-100">
               Naming Rules
             </h3>
             <div className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
@@ -98,7 +98,7 @@ export default function DocsPage() {
               </div>
             </div>
           </div>
-          <pre className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">{`Manager (HNSManager)
+          <pre className="rounded-lg bg-gray-50 p-4 text-sm break-words whitespace-pre-wrap text-gray-800 dark:bg-gray-900 dark:text-gray-200">{`Manager (HNSManager)
   ├─ Tracks registered TLDs: ["rise", "hotdogs", ...]
   ├─ Maps TLD -> NameService contract address
   ├─ Provides global read helpers: resolve(name, tld), reverseLookup(address), etc.
@@ -114,10 +114,10 @@ NameService (per TLD)
         </div>
 
         {/* Node.js RPC Setup */}
-        <div className="p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300 glass-card">
+        <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
           <div className="flex items-center gap-3">
             <Code className="text-blue-500" />
-            <h2 className="text-2xl font-semibold text-foreground">
+            <h2 className="text-2xl font-semibold text-black dark:text-white">
               Node.js RPC setup + Basic Examples
             </h2>
           </div>
@@ -156,11 +156,11 @@ const manager = getContract({
         </div>
 
         {/* Core Reads */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
             <div className="flex items-center gap-3">
               <Link className="text-blue-500" />
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="text-xl font-semibold text-black dark:text-white">
                 Resolve name → on-chain record
               </h3>
             </div>
@@ -173,10 +173,10 @@ const manager = getContract({
             />
           </div>
 
-          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
+          <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
             <div className="flex items-center gap-3">
               <RefreshCw className="text-purple-500" />
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="text-xl font-semibold text-black dark:text-white">
                 Reverse: address → primary name
               </h3>
             </div>
@@ -190,10 +190,10 @@ const manager = getContract({
         </div>
 
         {/* TLD discovery and NameService access */}
-        <div className="glass-card p-6 border border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
+        <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
           <div className="flex items-center gap-3">
             <FileText className="text-green-500" />
-            <h2 className="text-2xl font-semibold text-foreground">
+            <h2 className="text-2xl font-semibold text-black dark:text-white">
               TLD discovery and NameService access
             </h2>
           </div>
@@ -209,10 +209,10 @@ const manager = getContract({
 
         {/* Registrations */}
         <div className="grid grid-cols-1 gap-6">
-          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
+          <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
             <div className="flex items-center gap-3">
               <Code className="text-blue-500" />
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="text-xl font-semibold text-black dark:text-white">
                 Register
               </h3>
             </div>
@@ -223,16 +223,18 @@ const manager = getContract({
             <CodeBlock
               code={`// Node.js viem write (requires wallet)\nimport { parseEther } from "viem";\n\n// const { data: walletClient } = useAbstractClient(); // see setup at AGW documentation\n\nconst years = 1n;\nconst priceWei = parseEther("0.004"); // sample pricing logic\n\nconst registerHash = await walletClient.writeContract({\n  address: nameService.address,\n  abi: (NameServiceABI as any).abi,\n  functionName: "register",\n  args: ["alice", years],\n  value: priceWei,\n});\nconsole.log(registerHash);`}
             />
-            <p className="text-gray-600 dark:text-gray-400 text-xs">
+            <p className="text-xs text-gray-600 dark:text-gray-400">
               Ensure the connected wallet has enough native token to cover price
               and gas.
             </p>
           </div>
 
-          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
+          <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
             <div className="flex items-center gap-3">
               <RefreshCw className="text-purple-500" />
-              <h3 className="text-xl font-semibold text-foreground">Renew</h3>
+              <h3 className="text-xl font-semibold text-black dark:text-white">
+                Renew
+              </h3>
             </div>
             <p className="text-gray-700 dark:text-gray-300">
               Extend an existing registration by a number of years.
@@ -242,10 +244,10 @@ const manager = getContract({
             />
           </div>
 
-          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
+          <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
             <div className="flex items-center gap-3">
               <Link className="text-blue-500" />
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="text-xl font-semibold text-black dark:text-white">
                 Transfer
               </h3>
             </div>
@@ -259,11 +261,11 @@ const manager = getContract({
         </div>
 
         {/* Additional Reads */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
             <div className="flex items-center gap-3">
               <FileText className="text-green-500" />
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="text-xl font-semibold text-black dark:text-white">
                 Expiration and pricing
               </h3>
             </div>
@@ -276,10 +278,10 @@ const manager = getContract({
             />
           </div>
 
-          <div className="p-6 border glass-card border-gray-200 dark:border-gray-700 rounded-xl space-y-4 hover:border-green-500 transition-all duration-300">
+          <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
             <div className="flex items-center gap-3">
               <Link className="text-blue-500" />
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="text-xl font-semibold text-black dark:text-white">
                 Main domain and owned domains
               </h3>
             </div>
