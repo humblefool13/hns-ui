@@ -13,12 +13,16 @@ import {
   ShoppingCart,
   Zap,
   Wallet,
-  Loader2,
+  Loader2
 } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { useContract } from "../contexts/ContractContext";
 import { useLoginWithAbstract } from "@abstract-foundation/agw-react";
 import NFTSVGCreator from "./NFTSVGCreator";
+import OpenSeaIcon from "../assets/opensea.svg";
+import MagicEdenIcon from "../assets/magicEden.svg";
+import MintifyIcon from "../assets/mintify.svg";
+import Image from "next/image";
 
 export default function SearchSection() {
   const [domainName, setDomainName] = useState("");
@@ -36,7 +40,11 @@ export default function SearchSection() {
     nftAddress?: string;
     tokenId?: string;
     price?: number;
-    marketplaces?: { name: string; url: string; icon: string }[];
+    marketplaces?: {
+      name: string;
+      url: string;
+      icon: any;
+    }[];
   }>(null);
 
   const {
@@ -45,7 +53,7 @@ export default function SearchSection() {
     getDomainPrice,
     registerDomain,
     isConnected,
-    isLoading,
+    isLoading
   } = useContract();
   const { login } = useLoginWithAbstract();
 
@@ -110,14 +118,14 @@ export default function SearchSection() {
     if (!/^[a-zA-Z0-9]+$/.test(name)) {
       return {
         isValid: false,
-        error: "Name can only contain letters and numbers",
+        error: "Name can only contain letters and numbers"
       };
     }
 
     if (name.startsWith(".") || name.endsWith(".")) {
       return {
         isValid: false,
-        error: "Name cannot start or end with a &apos;.&apos;",
+        error: "Name cannot start or end with a &apos;.&apos;"
       };
     }
 
@@ -178,24 +186,19 @@ export default function SearchSection() {
             {
               name: "OpenSea",
               url: `https://opensea.io/item/abstract/${domainInfo.nftAddress}/${domainInfo.tokenId}`,
-              icon: "🦄",
+              icon: OpenSeaIcon
             },
             {
               name: "Magic Eden",
               url: `https://magiceden.io/item-details/abstract/${domainInfo.nftAddress}/${domainInfo.tokenId}`,
-              icon: "✨",
-            },
-            {
-              name: "ZKMarket",
-              url: `https://www.zkmarkets.com/abstract/collections/${domainInfo.nftAddress}/nfts/${domainInfo.tokenId}`,
-              icon: "🔒",
+              icon: MagicEdenIcon
             },
             {
               name: "Mintify",
               url: `https://app.mintify.com/nft/abstract/${domainInfo.nftAddress}/${domainInfo.tokenId}`,
-              icon: "🎨",
-            },
-          ],
+              icon: MintifyIcon
+            }
+          ]
         });
       } else {
         // Domain is available
@@ -206,7 +209,7 @@ export default function SearchSection() {
             domain: `${name}.${tld}`,
             tld,
             name,
-            price,
+            price
           });
           setCurrentPrice(price);
         } catch (error) {
@@ -215,7 +218,7 @@ export default function SearchSection() {
             type: "not-found",
             domain: `${name}.${tld}`,
             tld,
-            name,
+            name
           });
           setCurrentPrice(null);
         }
@@ -227,9 +230,14 @@ export default function SearchSection() {
       setIsSearching(false);
     }
 
-    // Scroll to results
-    const el = document.querySelector('[data-section="results"]');
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      if (typeof window !== "undefined" && typeof document !== "undefined") {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: "smooth"
+        });
+      }
+    }, 100);
   };
 
   const handleRegister = async () => {
@@ -251,61 +259,69 @@ export default function SearchSection() {
   };
 
   return (
-    <section className="py-12 px-6 md:ml-96 md:mr-6">
-      <div className="max-w-6xl mx-auto">
+    <section className="px-6 md:mr-6 md:ml-96 2xl:py-12">
+      <div className="mx-auto max-w-6xl">
         {/* Hero Card */}
         <motion.div
-          className="glass-card rounded-2xl p-12 text-center my-18 relative"
+          className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 pt-12 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <motion.div
-            className="absolute top-6 right-6 group cursor-pointer z-20"
+            className="group absolute top-6 right-6 z-20 cursor-pointer"
             initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
-            whileHover={{ scale: 1.1, rotate: 5 }}
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 rounded-full blur-sm opacity-80 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute inset-0 bg-gradient-to-br from-yellow-300 via-yellow-400 to-amber-500 rounded-full animate-pulse"></div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 opacity-80 blur-sm transition-opacity duration-300 group-hover:opacity-100">
+                <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-amber-500"></div>
               </div>
-              <div className="relative bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 rounded-full p-4 shadow-2xl border-2 border-yellow-300 group-hover:border-yellow-200 transition-all duration-300">
-                <div className="text-white text-2xl mb-1 group-hover:scale-110 transition-transform duration-300">
+              <div className="relative rounded-full border-2 border-yellow-300 bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 p-4 shadow-2xl transition-all duration-300 group-hover:border-yellow-200">
+                <div className="mb-1 text-2xl text-white transition-transform duration-300 group-hover:scale-110">
                   👑
                 </div>
-                <div className="text-white text-xs font-bold tracking-wider group-hover:scale-105 transition-transform duration-300">
+                <div className="text-xs font-bold tracking-wider text-white transition-transform duration-300 group-hover:scale-105">
                   XP REWARDS
                 </div>
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity duration-300"></div>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:animate-pulse group-hover:opacity-100"></div>
               </div>
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-64 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/90 dark:to-amber-900/90 border-2 border-yellow-300 dark:border-yellow-600 rounded-2xl p-3 shadow-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none">
+              <div className="pointer-events-none absolute top-full left-1/2 mt-2 w-64 -translate-x-1/2 translate-y-2 transform rounded-2xl border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-amber-50 p-3 opacity-0 shadow-2xl transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 dark:border-yellow-600 dark:from-yellow-900/90 dark:to-amber-900/90">
                 <div className="text-center">
-                  <div className="text-yellow-200 dark:text-yellow-200 font-bold text-sm mb-2 flex items-center justify-center gap-1">
+                  <div className="mb-2 flex items-center justify-center gap-1 text-sm font-bold text-yellow-700 dark:text-yellow-200">
                     <span>👑</span>
                     <span>HotDogs NFT XP</span>
                     <span>👑</span>
                   </div>
-                  <div className="text-yellow-700 dark:text-yellow-300 text-xs space-y-1">
+                  <div className="space-y-1 text-xs text-yellow-700 dark:text-yellow-300">
                     <p className="font-semibold">Abstract Portal:</p>
                     <p>• Earn XP for holding NFTs</p>
-                    <p className="font-semibold mt-2">HotDogs Portal:</p>
+                    <p className="mt-2 font-semibold">HotDogs Portal:</p>
                     <p>• 10 points per NFT</p>
                     <p>• Bonus from badges</p>
-                    <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1 italic">
+                    <p className="mt-1 text-xs text-yellow-600 italic dark:text-yellow-400">
                       Level up with badges!
                     </p>
                   </div>
                 </div>
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-b-6 border-l-transparent border-r-transparent border-b-yellow-300 dark:border-b-yellow-600"></div>
+                <div className="absolute bottom-full left-1/2 h-0 w-0 -translate-x-1/2 transform border-r-6 border-b-6 border-l-6 border-r-transparent border-b-yellow-300 border-l-transparent dark:border-b-yellow-600"></div>
               </div>
             </div>
           </motion.div>
 
           {/* Main Heading */}
           <motion.h1
-            className="text-5xl md:text-7xl font-inter pb-10 animated-gradient-text-wave drop-shadow-lg transition-all duration-300"
+            className="pb-10 text-5xl font-bold drop-shadow-lg transition-all duration-300 md:text-7xl"
+            style={{
+              background:
+                "linear-gradient(45deg, #03d26e, #41f09c, #00c466, #22c55e, #16a34a, #03d26e)",
+              backgroundSize: "500% 500%",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              animation: "gradientWave 5s ease-in-out infinite"
+            }}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
@@ -317,14 +333,16 @@ export default function SearchSection() {
 
           {/* Subtitle */}
           <motion.p
-            className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-inter mb-12 max-w-3xl mx-auto font-medium leading-relaxed transition-colors duration-300"
+            className="mx-auto mb-12 max-w-3xl text-xl leading-relaxed font-medium text-gray-700 transition-colors duration-300 md:text-2xl dark:text-gray-300"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           >
-            On Abstract, everything&apos;s fast, cheap, and fun. Claim your
-            hotdog name — one sizzling identity for all your wallets, dApps, and
-            community flexing.
+            Your hotdog name isn&apos;t just a domain
+            <br />
+            it&apos;s your flavor in the web3 cookout.
+            <br />
+            Own it, flex it, and let it be your web3 flavor.
           </motion.p>
 
           {/* Available TLDs */}
@@ -335,14 +353,14 @@ export default function SearchSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
                 Available TLDs:
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {availableTLDs.map((tld) => (
                   <span
                     key={tld}
-                    className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium hover:animated-gradient-text-fast transition-all duration-300 hover:scale-105"
+                    className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700 transition-all duration-300 hover:scale-105 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300 dark:hover:bg-green-800/50"
                   >
                     .{tld}
                   </span>
@@ -353,14 +371,14 @@ export default function SearchSection() {
 
           {/* Search Section */}
           <motion.div
-            className="relative max-w-2xl mx-auto mb-8"
+            className="relative mx-auto mb-8 max-w-2xl"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
           >
             <div className="relative">
               <Search
-                className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 z-10 transition-colors duration-300"
+                className="absolute top-1/2 left-6 z-10 -translate-y-1/2 transform text-gray-400 transition-colors duration-300 dark:text-gray-500"
                 size={24}
               />
               <input
@@ -371,17 +389,17 @@ export default function SearchSection() {
                   setDomainName(e.target.value);
                   setHasAttemptedSearch(false);
                 }}
-                className="relative w-full px-16 py-6 text-xl font-inter bg-background border-2 border-gray-200 dark:border-gray-600 rounded-3xl text-foreground placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-green-300 focus:border-green-400 transition-all duration-300 shadow-lg"
+                className="bg-background relative w-full rounded-3xl border-2 border-gray-300 px-16 py-6 text-xl text-black placeholder-gray-400 shadow-lg transition-all duration-300 focus:border-green-400 focus:ring-4 focus:ring-green-300 focus:outline-none dark:border-gray-600 dark:text-white dark:placeholder-gray-500 dark:shadow-md dark:shadow-white"
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
               <Sparkles
-                className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 z-10 transition-colors duration-300"
+                className="absolute top-1/2 right-6 z-10 -translate-y-1/2 transform text-gray-400 transition-colors duration-300 dark:text-gray-500"
                 size={24}
               />
             </div>
 
             <motion.button
-              className="abstract-green-gradient mt-6 px-12 py-4 text-xl font-inter text-white shadow-lg relative overflow-hidden rounded-2xl disabled:opacity-60 inline-flex items-center justify-center gap-2 whitespace-nowrap"
+              className="relative mt-6 inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-green-500 to-green-600 px-12 py-4 text-xl font-medium text-white shadow-lg transition-all duration-300 hover:from-green-600 hover:to-green-700 hover:shadow-xl disabled:opacity-60"
               disabled={
                 !domainName.trim() ||
                 !validation.isValid ||
@@ -394,7 +412,7 @@ export default function SearchSection() {
             >
               {isSearching ? (
                 <>
-                  <Loader2 className="animate-spin mr-2" size={20} />
+                  <Loader2 className="mr-2 animate-spin" size={20} />
                   Searching…
                 </>
               ) : (
@@ -434,20 +452,20 @@ export default function SearchSection() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -30, scale: 0.95 }}
               transition={{ duration: 0.4 }}
-              className="max-w-4xl mx-auto"
+              className="mx-auto mt-16 max-w-4xl"
             >
               {result.type === "found" ? (
-                <div className="glass-card p-8 rounded-2xl border border-black/10 dark:border-white/10">
-                  <div className="text-center mb-6">
+                <div className="hover:border-dim-green dark:hover:border-bright-green rounded-2xl border border-gray-300 bg-gray-100 p-8 shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+                  <div className="mb-6 text-center">
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ duration: 0.3, delay: 0.1 }}
-                      className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-3"
+                      className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30"
                     >
                       <AlertCircle className="text-red-500" size={32} />
                     </motion.div>
-                    <h2 className="text-2xl font-bold text-foreground mb-1">
+                    <h2 className="mb-1 text-2xl font-bold text-black dark:text-white">
                       Domain Already Taken
                     </h2>
                     <p className="text-gray-600 dark:text-gray-300">
@@ -463,39 +481,38 @@ export default function SearchSection() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    className="flex justify-center mb-6"
+                    className="mb-6 flex justify-center"
                   >
-                    <div className="relative group">
+                    <div className="group relative">
                       <NFTSVGCreator
                         name={result.name}
                         tld={result.tld}
-                        className="w-48 h-48 rounded-2xl shadow-2xl border-2 border-gray-200 dark:border-gray-600 transition-all duration-300 group-hover:shadow-red-500/50 group-hover:shadow-3xl group-hover:scale-105 group-hover:border-red-300 dark:group-hover:border-red-400"
+                        className="group-hover:shadow-3xl h-48 w-48 rounded-2xl border-2 border-gray-200 shadow-2xl transition-all duration-300 group-hover:scale-105 group-hover:border-red-300 group-hover:shadow-red-500/50 dark:border-gray-600 dark:group-hover:border-red-400"
                       />
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-
-                      {/* Red Glow Effect */}
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-400/0 via-red-500/0 to-red-400/0 group-hover:from-red-400/20 group-hover:via-red-500/30 group-hover:to-red-400/20 transition-all duration-500 pointer-events-none" />
+                      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent" />
 
                       {/* Pulsing Ring Effect */}
-                      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-red-400/50 group-hover:animate-pulse transition-all duration-300 pointer-events-none" />
+                      <div className="pointer-events-none absolute inset-0 rounded-2xl border-2 border-transparent transition-all duration-300 group-hover:animate-pulse group-hover:border-red-400/50" />
                     </div>
                   </motion.div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="p-6 border border-gray-200 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
-                      <div className="flex items-center gap-3 mb-2">
+                  <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 dark:border-white/10">
+                      <div className="mb-2 flex items-center gap-3">
                         <Crown className="text-yellow-500" size={18} />
-                        <h3 className="font-semibold text-foreground">Owner</h3>
+                        <h3 className="font-semibold text-black dark:text-white">
+                          Owner
+                        </h3>
                       </div>
-                      <p className="font-mono text-sm text-gray-600 dark:text-gray-300 break-all">
+                      <p className="font-mono text-sm break-all text-gray-600 dark:text-gray-300">
                         {result.owner}
                       </p>
                     </div>
 
-                    <div className="p-6 border border-gray-200 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
-                      <div className="flex items-center gap-3 mb-2">
+                    <div className="rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 dark:border-white/10">
+                      <div className="mb-2 flex items-center gap-3">
                         <Calendar className="text-blue-500" size={18} />
-                        <h3 className="font-semibold text-foreground">
+                        <h3 className="font-semibold text-black dark:text-white">
                           Expires
                         </h3>
                       </div>
@@ -504,10 +521,10 @@ export default function SearchSection() {
                       </p>
                     </div>
 
-                    <div className="p-6 border border-gray-200 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
-                      <div className="flex items-center gap-3 mb-2">
+                    <div className="rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 dark:border-white/10">
+                      <div className="mb-2 flex items-center gap-3">
                         <ShoppingCart className="text-purple-500" size={18} />
-                        <h3 className="font-semibold text-foreground">
+                        <h3 className="font-semibold text-black dark:text-white">
                           Available On
                         </h3>
                       </div>
@@ -518,27 +535,34 @@ export default function SearchSection() {
                             href={mkt.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-300 transition-all duration-300"
+                            className="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1 text-sm text-gray-700 transition-all duration-300 hover:bg-green-100 hover:text-green-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-green-900/30 dark:hover:text-green-300"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{
                               duration: 0.2,
-                              delay: 0.2 + idx * 0.05,
+                              delay: 0.2 + idx * 0.05
                             }}
                           >
-                            <span>{mkt.icon}</span>
+                            <Image
+                              src={mkt.icon}
+                              alt={mkt.name}
+                              width={16}
+                              height={16}
+                              className="dark:invert"
+                            />
+                            <span className="sr-only">{mkt.name}</span>
                             {mkt.name}
                             <ExternalLink size={12} />
                           </motion.a>
                         ))}
                       </div>
                     </div>
-                    <div className="p-6 border border-gray-200 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
-                      <div className="flex items-center gap-3 mb-2">
+                    <div className="rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 dark:border-white/10">
+                      <div className="mb-2 flex items-center gap-3">
                         <ExternalLink className="text-green-500" size={18} />
-                        <h3 className="font-semibold text-foreground">
+                        <h3 className="font-semibold text-black dark:text-white">
                           Explorer
                         </h3>
                       </div>
@@ -547,7 +571,7 @@ export default function SearchSection() {
                           href={`https://sepolia.abscan.org/nft/${result.nftAddress}/${result.tokenId}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-300 transition-all duration-300 w-fit"
+                          className="inline-flex w-fit items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-all duration-300 hover:bg-green-100 hover:text-green-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-green-900/30 dark:hover:text-green-300"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
@@ -555,7 +579,7 @@ export default function SearchSection() {
                           <ExternalLink size={12} />
                         </motion.a>
                         {result.nftAddress && result.tokenId && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 break-all">
+                          <p className="text-xs break-all text-gray-500 dark:text-gray-400">
                             {result.nftAddress} / {result.tokenId}
                           </p>
                         )}
@@ -564,17 +588,17 @@ export default function SearchSection() {
                   </div>
                 </div>
               ) : (
-                <div className="glass-card p-8 rounded-2xl border border-black/10 dark:border-white/10">
-                  <div className="text-center mb-6">
+                <div className="hover:border-dim-green dark:hover:border-bright-green rounded-2xl border border-gray-300 bg-gray-100 p-8 shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+                  <div className="mb-6 text-center">
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ duration: 0.3, delay: 0.1 }}
-                      className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-3"
+                      className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30"
                     >
                       <CheckCircle className="text-green-500" size={32} />
                     </motion.div>
-                    <h2 className="text-2xl font-bold text-foreground mb-1">
+                    <h2 className="mb-1 text-2xl font-bold text-black dark:text-white">
                       Domain Available!
                     </h2>
                     <p className="text-gray-600 dark:text-gray-300">
@@ -590,29 +614,26 @@ export default function SearchSection() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    className="flex justify-center mb-6"
+                    className="mb-6 flex justify-center"
                   >
-                    <div className="relative group">
+                    <div className="group relative">
                       <NFTSVGCreator
                         name={result.name}
                         tld={result.tld}
-                        className="w-48 h-48 rounded-2xl shadow-2xl border-2 border-green-400 dark:border-green-500 transition-all duration-300 group-hover:shadow-green-500/50 group-hover:shadow-3xl group-hover:scale-105 group-hover:border-green-300 dark:group-hover:border-green-400"
+                        className="group-hover:shadow-3xl h-48 w-48 rounded-2xl border-2 border-green-400 shadow-2xl transition-all duration-300 group-hover:scale-105 group-hover:border-green-300 group-hover:shadow-green-500/50 dark:border-green-500 dark:group-hover:border-green-400"
                       />
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-
-                      {/* Green Glow Effect */}
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/0 via-green-500/0 to-green-400/0 group-hover:from-green-400/20 group-hover:via-green-500/30 group-hover:to-green-400/20 transition-all duration-500 pointer-events-none" />
+                      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent" />
 
                       {/* Pulsing Ring Effect */}
-                      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-green-400/50 group-hover:animate-pulse transition-all duration-300 pointer-events-none" />
+                      <div className="pointer-events-none absolute inset-0 rounded-2xl border-2 border-transparent transition-all duration-300 group-hover:animate-pulse group-hover:border-green-400/50" />
                     </div>
                   </motion.div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="p-6 border border-gray-200 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
-                      <div className="flex items-center gap-3 mb-3">
+                  <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 dark:border-white/10">
+                      <div className="mb-3 flex items-center gap-3">
                         <Calendar className="text-blue-500" size={18} />
-                        <h3 className="font-semibold text-foreground">
+                        <h3 className="font-semibold text-black dark:text-white">
                           Registration Period
                         </h3>
                       </div>
@@ -621,10 +642,10 @@ export default function SearchSection() {
                           <button
                             key={year}
                             onClick={() => setSelectedYears(year)}
-                            className={`p-3 rounded-xl border-2 text-sm transition-all hover:border-green-500 duration-300 ${
+                            className={`rounded-xl border-2 p-3 text-sm text-black transition-all duration-300 hover:border-green-500 dark:text-white ${
                               selectedYears === year
-                                ? "border-green-400 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
-                                : "border-gray-200 dark:border-gray-600 hover:border-green-400"
+                                ? "border-green-400 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                                : "border-gray-200 hover:border-green-400 dark:border-gray-600"
                             }`}
                           >
                             {year} {year === 1 ? "Year" : "Years"}
@@ -633,15 +654,15 @@ export default function SearchSection() {
                       </div>
                     </div>
 
-                    <div className="p-6 border border-gray-200 dark:border-white/10 rounded-xl hover:border-green-500 transition-all duration-300">
-                      <div className="flex items-center gap-3 mb-3">
+                    <div className="rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 dark:border-white/10">
+                      <div className="mb-3 flex items-center gap-3">
                         <DollarSign className="text-green-500" size={18} />
-                        <h3 className="font-semibold text-foreground">
+                        <h3 className="font-semibold text-black dark:text-white">
                           Estimated Cost
                         </h3>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-green-500 mb-1">
+                        <div className="mb-1 text-3xl font-bold text-green-500">
                           {currentPrice ? currentPrice : "..."} ETH
                         </div>
                         <p className="text-gray-600 dark:text-gray-300">
@@ -656,7 +677,7 @@ export default function SearchSection() {
                     {!isConnected ? (
                       <motion.button
                         onClick={login}
-                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-10 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105 shadow-lg inline-flex items-center gap-2"
+                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-10 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-blue-600 hover:to-blue-700 hover:shadow-2xl"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >
@@ -669,14 +690,14 @@ export default function SearchSection() {
                           <motion.button
                             onClick={handleRegister}
                             disabled={isRegistering}
-                            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-10 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105 shadow-lg inline-flex items-center gap-2 disabled:opacity-60"
+                            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-10 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-green-600 hover:to-green-700 hover:shadow-2xl disabled:opacity-60"
                             whileHover={{ scale: isRegistering ? 1 : 1.05 }}
                             whileTap={{ scale: isRegistering ? 1 : 0.95 }}
                           >
                             {isRegistering ? (
                               <>
                                 <Loader2
-                                  className="animate-spin mr-2"
+                                  className="mr-2 animate-spin"
                                   size={20}
                                 />
                                 Registering...
@@ -693,7 +714,7 @@ export default function SearchSection() {
                             href={explorerTxUrl || "#"}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-10 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105 shadow-lg inline-flex items-center gap-2"
+                            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-10 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-green-600 hover:to-green-700 hover:shadow-2xl"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
