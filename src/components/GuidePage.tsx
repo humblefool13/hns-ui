@@ -4,15 +4,9 @@ import { motion } from "framer-motion";
 import {
   BookOpen,
   Play,
-  FileText,
   Users,
-  Globe,
-  Shield,
-  Zap,
   ArrowRight,
   ExternalLink,
-  CheckCircle,
-  AlertCircle,
   Info
 } from "lucide-react";
 

@@ -1,16 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Clock,
-  RefreshCw,
-  Plus,
-  ExternalLink,
-  Send,
-  Star,
-  Wallet,
-  RotateCcw
-} from "lucide-react";
+import { RefreshCw, Plus, Send, Star, Wallet, RotateCcw } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useContract } from "../contexts/ContractContext";
 import NFTSVGCreator from "./NFTSVGCreator";
