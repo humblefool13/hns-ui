@@ -32,7 +32,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="font-inter min-h-screen bg-white dark:bg-black">
+    <div className="font-inter min-h-screen overflow-x-hidden bg-white dark:bg-black">
       <Navbar currentPage={currentPage} setCurrentPage={setCurrentPage} />
       <AnimatePresence mode="wait">
         <motion.div

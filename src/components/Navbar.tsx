@@ -146,9 +146,9 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
 
       {/* Floating Sidebar Navigation */}
       <motion.nav
-        className={`fixed top-6 z-40 h-[calc(100vh-48px)] w-72 transform rounded-3xl border border-gray-300 bg-gray-100 shadow-xl/30 shadow-black transition-all duration-300 ease-in-out md:left-6 dark:border-gray-600 dark:bg-[#1e1e1e] dark:shadow-white ${
+        className={`fixed top-6 z-40 h-[calc(100vh-48px)] w-80 transform rounded-3xl border border-gray-300 bg-gray-100 shadow-xl/30 shadow-black transition-all duration-300 ease-in-out md:left-6 md:w-72 dark:border-gray-600 dark:bg-[#1e1e1e] dark:shadow-white ${
           isMobileMenuOpen
-            ? "left-8 translate-x-0"
+            ? "left-5 translate-x-0"
             : "left-[-12px] -translate-x-full md:translate-x-0"
         }`}
         initial={{ x: -50 }}
@@ -175,7 +175,10 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
 
             {/* Theme Toggle */}
             <motion.button
-              onClick={toggleTheme}
+              onClick={() => {
+                toggleTheme();
+                setIsMobileMenuOpen(false);
+              }}
               className="flex-shrink-0 rounded-full bg-gray-200 p-2 transition-all duration-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
