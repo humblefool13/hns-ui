@@ -65,6 +65,7 @@ export default function SearchSection() {
   const [tx, setTx] = useState<string | null>(null);
   const explorerTxUrl = tx ? `https://sepolia.abscan.org/tx/${tx}` : null;
   const shortTx = tx ? `${tx.slice(0, 10)}…${tx.slice(-6)}` : null;
+  const [width, setWidth] = useState(window.innerWidth);
 
   // Load available TLDs on component mount (works even if not connected via fallback client)
   useEffect(() => {
@@ -259,27 +260,27 @@ export default function SearchSection() {
   };
 
   return (
-    <section className="px-6 md:mr-6 md:ml-96 2xl:py-12">
+    <section className="md:py-none px-2 py-8 md:mr-6 md:ml-96 md:px-6 2xl:py-12">
       <div className="mx-auto max-w-6xl">
         {/* Hero Card */}
         <motion.div
-          className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 pt-12 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black"
+          className="hover:border-dim-green dark:hover:border-bright-green md:px-none relative mt-12 rounded-2xl border border-gray-300 bg-gray-100 px-4 pt-12 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg md:mt-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <motion.div
-            className="group absolute top-6 right-6 z-20 cursor-pointer"
+            className="group absolute top-[-50px] right-0 z-20 cursor-pointer md:top-6 md:right-6"
             initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
           >
-            <div className="relative">
+            <div className="relative hidden md:block">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 opacity-80 blur-sm transition-opacity duration-300 group-hover:opacity-100">
                 <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-amber-500"></div>
               </div>
-              <div className="relative rounded-full border-2 border-yellow-300 bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 p-4 shadow-2xl transition-all duration-300 group-hover:border-yellow-200">
-                <div className="mb-1 text-2xl text-white transition-transform duration-300 group-hover:scale-110">
+              <div className="relative rounded-3xl border-2 border-yellow-300 bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 p-2 shadow-2xl transition-all duration-300 group-hover:border-yellow-200 md:rounded-full md:p-4">
+                <div className="mb-1 text-lg text-white transition-transform duration-300 group-hover:scale-110 md:text-2xl">
                   👑
                 </div>
                 <div className="text-xs font-bold tracking-wider text-white transition-transform duration-300 group-hover:scale-105">
@@ -312,7 +313,7 @@ export default function SearchSection() {
 
           {/* Main Heading */}
           <motion.h1
-            className="pb-10 text-5xl font-bold drop-shadow-lg transition-all duration-300 md:text-7xl"
+            className="pb-10 text-3xl font-bold drop-shadow-lg transition-all duration-300 md:text-7xl"
             style={{
               background:
                 "linear-gradient(45deg, #03d26e, #41f09c, #00c466, #22c55e, #16a34a, #03d26e)",
@@ -333,7 +334,7 @@ export default function SearchSection() {
 
           {/* Subtitle */}
           <motion.p
-            className="mx-auto mb-12 max-w-3xl text-xl leading-relaxed font-medium text-gray-700 transition-colors duration-300 md:text-2xl dark:text-gray-300"
+            className="text-md mx-auto mb-12 max-w-3xl leading-relaxed font-medium text-gray-700 transition-colors duration-300 md:text-2xl dark:text-gray-300"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
@@ -378,33 +379,34 @@ export default function SearchSection() {
           >
             <div className="relative">
               <Search
-                className="absolute top-1/2 left-6 z-10 -translate-y-1/2 transform text-gray-400 transition-colors duration-300 dark:text-gray-500"
-                size={24}
+                className="absolute top-1/2 left-3 z-10 -translate-y-1/2 transform text-gray-400 transition-colors duration-300 md:left-6 dark:text-gray-500"
+                size={width > 768 ? 24 : 20}
               />
               <input
                 type="text"
-                placeholder="Search for a name like sausage.hotdogs"
+                placeholder={
+                  width > 768
+                    ? "Search for a name like sausage.hotdogs"
+                    : "sausage.hotdogs"
+                }
                 value={domainName}
                 onChange={(e) => {
                   setDomainName(e.target.value);
                   setHasAttemptedSearch(false);
                 }}
-                className="bg-background relative w-full rounded-3xl border-2 border-gray-300 px-16 py-6 text-xl text-black placeholder-gray-400 shadow-lg transition-all duration-300 focus:border-green-400 focus:ring-4 focus:ring-green-300 focus:outline-none dark:border-gray-600 dark:text-white dark:placeholder-gray-500 dark:shadow-md dark:shadow-white"
+                className="bg-background text-md relative w-full rounded-3xl border-2 border-gray-300 px-10 py-4 text-black placeholder-gray-400 shadow-lg transition-all duration-300 focus:border-green-400 focus:ring-4 focus:ring-green-300 focus:outline-none md:px-16 md:py-6 md:text-xl dark:border-gray-600 dark:text-white dark:placeholder-gray-500 dark:shadow-md dark:shadow-white"
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
               <Sparkles
-                className="absolute top-1/2 right-6 z-10 -translate-y-1/2 transform text-gray-400 transition-colors duration-300 dark:text-gray-500"
-                size={24}
+                className="absolute top-1/2 right-3 z-10 -translate-y-1/2 transform text-gray-400 transition-colors duration-300 md:right-6 dark:text-gray-500"
+                size={width > 768 ? 24 : 20}
               />
             </div>
 
             <motion.button
               className="relative mt-6 inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-green-500 to-green-600 px-12 py-4 text-xl font-medium text-white shadow-lg transition-all duration-300 hover:from-green-600 hover:to-green-700 hover:shadow-xl disabled:opacity-60"
               disabled={
-                !domainName.trim() ||
-                !validation.isValid ||
-                isSearching ||
-                isLoading
+                !domainName.trim() || !validation.isValid || isSearching
               }
               whileHover={{ scale: isSearching ? 1 : 1.05 }}
               whileTap={{ scale: isSearching ? 1 : 0.95 }}
@@ -535,7 +537,7 @@ export default function SearchSection() {
                             href={mkt.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1 text-sm text-gray-700 transition-all duration-300 hover:bg-green-100 hover:text-green-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-green-900/30 dark:hover:text-green-300"
+                            className="inline-flex items-center gap-2 rounded-lg bg-gray-200 px-3 py-1 text-sm text-gray-700 transition-all duration-300 hover:bg-green-100 hover:text-green-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-green-900/30 dark:hover:text-green-300"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             initial={{ opacity: 0, x: -20 }}
@@ -571,7 +573,7 @@ export default function SearchSection() {
                           href={`https://sepolia.abscan.org/nft/${result.nftAddress}/${result.tokenId}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex w-fit items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700 transition-all duration-300 hover:bg-green-100 hover:text-green-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-green-900/30 dark:hover:text-green-300"
+                          className="inline-flex w-fit items-center gap-2 rounded-lg bg-gray-200 px-3 py-2 text-sm text-gray-700 transition-all duration-300 hover:bg-green-100 hover:text-green-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-green-900/30 dark:hover:text-green-300"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
