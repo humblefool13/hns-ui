@@ -138,7 +138,6 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
       {/* Mobile Menu Button */}
       <motion.button
         className="fixed top-4 left-4 z-50 rounded-xl border border-gray-200 bg-white p-3 text-gray-700 shadow-lg transition-all duration-200 hover:bg-gray-50 hover:text-gray-900 md:hidden dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
-        whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       >
@@ -147,10 +146,10 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
 
       {/* Floating Sidebar Navigation */}
       <motion.nav
-        className={`fixed top-6 left-6 z-40 h-[calc(100vh-48px)] w-72 transform rounded-3xl border border-gray-300 bg-gray-100 shadow-xl/30 shadow-black transition-all duration-300 ease-in-out dark:border-gray-600 dark:bg-[#1e1e1e] dark:shadow-white ${
+        className={`fixed top-6 z-40 h-[calc(100vh-48px)] w-72 transform rounded-3xl border border-gray-300 bg-gray-100 shadow-xl/30 shadow-black transition-all duration-300 ease-in-out md:left-6 dark:border-gray-600 dark:bg-[#1e1e1e] dark:shadow-white ${
           isMobileMenuOpen
-            ? "translate-x-0"
-            : "-translate-x-full md:translate-x-0"
+            ? "left-8 translate-x-0"
+            : "left-[-12px] -translate-x-full md:translate-x-0"
         }`}
         initial={{ x: -50 }}
         animate={{ x: isMobileMenuOpen ? 0 : 8 }}
@@ -300,7 +299,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
             ) : (
               // Not Connected State - Show Connect Wallet
               <div className="text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 transition-colors duration-300 dark:bg-gray-800">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 transition-colors duration-300 dark:bg-gray-900">
                   <Wallet
                     size={24}
                     className="text-gray-500 transition-colors duration-300 dark:text-gray-400"
@@ -334,7 +333,10 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
             ].map((item) => (
               <motion.button
                 key={item.id}
-                onClick={() => setCurrentPage(item.id as PageType)}
+                onClick={() => {
+                  setCurrentPage(item.id as PageType);
+                  setIsMobileMenuOpen(false);
+                }}
                 className={`group flex w-full items-center space-x-3 rounded-xl p-3 text-left transition-all duration-300 hover:bg-gray-300 dark:hover:bg-gray-600 ${
                   currentPage === item.id
                     ? "border-dim-green border bg-green-300/20 dark:bg-green-600/20"

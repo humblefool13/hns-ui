@@ -278,54 +278,6 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     }
   };
 
-  // const sendTransaction = async (
-  //   functionName: string,
-  //   args: any[],
-  //   address: Address,
-  //   value: bigint | null
-  // ): Promise<Hex> => {
-  //   try {
-  //     let name: string;
-  //     switch (functionName) {
-  //       case "register":
-  //       case "renew":
-  //         name = functionName;
-  //         break;
-  //       case "transfer":
-  //         name = "transferDomain";
-  //         break;
-  //       default:
-  //         throw new Error("Invalid function name: " + functionName);
-  //     }
-  //     if (!abstractClient) throw new Error("Abstract client not initialized");
-  //     let transaction: Hex;
-  //     if (value) {
-  //       transaction = await abstractClient.writeContract({
-  //         address,
-  //         abi: NameServiceABI,
-  //         functionName: name,
-  //         args: args.map((arg) =>
-  //           typeof arg === "string" ? arg.toLowerCase() : arg
-  //         ),
-  //         value,
-  //       });
-  //     } else {
-  //       transaction = await abstractClient.writeContract({
-  //         address,
-  //         abi: NameServiceABI,
-  //         functionName: name,
-  //         args: args.map((arg) =>
-  //           typeof arg === "string" ? arg.toLowerCase() : arg
-  //         ),
-  //       });
-  //     }
-  //     return transaction as Hex;
-  //   } catch (err) {
-  //     console.error("Error sending transaction:", err);
-  //     throw err;
-  //   }
-  // };
-
   // Name Service functions
 
   const registerDomain = async (
