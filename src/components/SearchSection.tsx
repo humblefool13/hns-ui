@@ -65,7 +65,26 @@ export default function SearchSection() {
   const [tx, setTx] = useState<string | null>(null);
   const explorerTxUrl = tx ? `https://sepolia.abscan.org/tx/${tx}` : null;
   const shortTx = tx ? `${tx.slice(0, 10)}…${tx.slice(-6)}` : null;
-  const [width, setWidth] = useState(window.innerWidth);
+  const [width, setWidth] = useState(1024); // Default to desktop width for SSR
+
+  // Handle window resize and set initial width
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    // Set initial width on client side
+    if (typeof window !== "undefined") {
+      setWidth(window.innerWidth);
+      window.addEventListener("resize", handleResize);
+    }
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", handleResize);
+      }
+    };
+  }, []);
 
   // Load available TLDs on component mount (works even if not connected via fallback client)
   useEffect(() => {

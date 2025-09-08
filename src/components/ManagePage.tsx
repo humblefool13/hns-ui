@@ -43,6 +43,26 @@ export default function ManagePage({
   const [renewPrice, setRenewPrice] = useState(0);
   const [hoveredDomain, setHoveredDomain] = useState<string | null>(null);
   const { login } = useLoginWithAbstract();
+  const [width, setWidth] = useState(1024); // Default to desktop width for SSR
+
+  // Handle window resize and set initial width
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    // Set initial width on client side
+    if (typeof window !== "undefined") {
+      setWidth(window.innerWidth);
+      window.addEventListener("resize", handleResize);
+    }
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", handleResize);
+      }
+    };
+  }, []);
 
   // Calculate stats
   const totalDomains = domains.length;
@@ -163,18 +183,18 @@ export default function ManagePage({
         className="mx-auto max-w-6xl space-y-6"
       >
         {/* Page Header */}
-        <div className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 p-8 shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
-          <div className="mb-6 flex items-center justify-between">
+        <div className="hover:border-dim-green dark:hover:border-bright-green relative mt-4 rounded-2xl border border-gray-300 bg-gray-100 p-8 shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg md:mt-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+          <div className="mb-6 flex flex-col items-center justify-between md:flex-row">
             <div>
-              <h1 className="mb-2 text-4xl font-bold text-black dark:text-white">
+              <h1 className="mb-2 text-2xl font-bold text-black md:text-4xl dark:text-white">
                 Manage Your HotDog Names
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300">
+              <p className="text-md text-gray-600 md:text-lg dark:text-gray-300">
                 Control and configure your Web3 identity portfolio
               </p>
             </div>
             <button
-              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:from-green-600 hover:to-green-700 hover:shadow-lg"
+              className="mt-6 flex items-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:from-green-600 hover:to-green-700 hover:shadow-lg md:mt-0"
               onClick={changeToSearch}
             >
               <Plus size={20} />
@@ -226,15 +246,15 @@ export default function ManagePage({
         {/* Owned Domains */}
         {isConnected && (
           <div className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 p-8 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="flex items-center gap-3 text-2xl font-bold text-black dark:text-white">
+            <div className="mb-6 flex flex-col items-center justify-between md:flex-row">
+              <h2 className="flex items-center gap-3 text-lg font-bold text-black md:text-2xl dark:text-white">
                 <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-green-100 dark:bg-green-800">
                   <div className="h-4 w-4 rounded-full bg-green-500 dark:bg-green-400"></div>
                 </div>
                 Your HotDog Names
               </h2>
               <button
-                className="flex items-center gap-2 text-gray-600 transition-colors duration-300 hover:text-green-500 dark:text-gray-400"
+                className="mt-2 flex items-center gap-2 text-gray-600 transition-colors duration-300 hover:text-green-500 md:mt-0 dark:text-gray-400"
                 onClick={loadDomains}
                 disabled={loading}
               >
@@ -269,10 +289,10 @@ export default function ManagePage({
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                     className="rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 dark:border-gray-700"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-center justify-between md:flex-row">
+                      <div className="flex flex-col items-center gap-4 md:flex-row">
                         <div
-                          className="group relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/30"
+                          className="group relative flex h-36 w-36 cursor-pointer items-center justify-center rounded-xl bg-green-100 md:h-12 md:w-12 dark:bg-green-900/30"
                           onMouseEnter={() => setHoveredDomain(domain.name)}
                           onMouseLeave={() => setHoveredDomain(null)}
                         >
@@ -282,7 +302,7 @@ export default function ManagePage({
                             className="h-full w-full"
                           />
                           {/* Hover Preview */}
-                          {hoveredDomain === domain.name && (
+                          {hoveredDomain === domain.name && width > 768 && (
                             <div className="pointer-events-none absolute -top-2 -left-2 z-50">
                               <div className="scale-150 transform rounded-lg border border-gray-200 bg-white p-4 shadow-2xl dark:border-gray-600 dark:bg-gray-800">
                                 <NFTSVGCreator
@@ -295,7 +315,7 @@ export default function ManagePage({
                           )}
                         </div>
                         <div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-col items-center md:flex-row md:gap-2">
                             <h3 className="font-mono text-xl font-bold text-black dark:text-white">
                               {domain.name}
                             </h3>
@@ -306,7 +326,7 @@ export default function ManagePage({
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                          <div className="mt-4 flex flex-col items-center text-sm text-gray-600 md:mt-0 md:flex-row md:gap-4 dark:text-gray-400">
                             <span
                               className={`rounded-full px-2 py-1 text-xs ${
                                 isExpiringSoon(domain.expiration)
@@ -325,7 +345,7 @@ export default function ManagePage({
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      <div className="mt-4 flex items-center gap-3 md:mt-0">
                         <button
                           className="rounded-lg p-2 text-gray-600 transition-all duration-300 hover:bg-green-50 hover:text-green-500 dark:text-gray-400 dark:hover:bg-green-900/20"
                           onClick={() => {

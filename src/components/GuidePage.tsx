@@ -91,11 +91,11 @@ export default function GuidePage() {
         className="mx-auto max-w-6xl space-y-6"
       >
         {/* Page Header */}
-        <div className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 py-6 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
-          <h1 className="mb-4 text-4xl font-bold text-black dark:text-white">
+        <div className="hover:border-dim-green dark:hover:border-bright-green relative mt-6 rounded-2xl border border-gray-300 bg-gray-100 py-6 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg md:mt-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+          <h1 className="mb-4 text-2xl font-bold text-black md:text-4xl dark:text-white">
             HotDog Name Service Guide
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-md text-gray-600 md:text-lg dark:text-gray-300">
             Everything you need to know about using and managing HotDog names on
             Abstract
           </p>
