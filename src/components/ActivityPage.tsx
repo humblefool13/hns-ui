@@ -255,7 +255,7 @@ export default function ActivityPage() {
                         </span>
                       </div>
                       <a
-                        href={`https://sepolia.abscan.org/tx/${evt.txHash}`}
+                        href={`https://${process.env.NEXT_PUBLIC_EXPLORER}/tx/${evt.txHash}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-green-600 hover:underline dark:text-green-400"

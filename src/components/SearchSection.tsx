@@ -63,7 +63,9 @@ export default function SearchSection() {
   const [validationError, setValidationError] = useState<string>("");
   const [hasAttemptedSearch, setHasAttemptedSearch] = useState(false);
   const [tx, setTx] = useState<string | null>(null);
-  const explorerTxUrl = tx ? `https://sepolia.abscan.org/tx/${tx}` : null;
+  const explorerTxUrl = tx
+    ? `https://${process.env.NEXT_PUBLIC_EXPLORER}/tx/${tx}`
+    : null;
   const shortTx = tx ? `${tx.slice(0, 10)}…${tx.slice(-6)}` : null;
   const [width, setWidth] = useState(1024); // Default to desktop width for SSR
 
@@ -589,7 +591,7 @@ export default function SearchSection() {
                       </div>
                       <div className="flex flex-col gap-3">
                         <motion.a
-                          href={`https://sepolia.abscan.org/nft/${result.nftAddress}/${result.tokenId}`}
+                          href={`https://${process.env.NEXT_PUBLIC_EXPLORER}/nft/${result.nftAddress}/${result.tokenId}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex w-fit items-center gap-2 rounded-lg bg-gray-200 px-3 py-2 text-sm text-gray-700 transition-all duration-300 hover:bg-green-100 hover:text-green-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-green-900/30 dark:hover:text-green-300"
