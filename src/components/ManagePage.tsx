@@ -175,7 +175,7 @@ export default function ManagePage({
   };
 
   return (
-    <div className="min-h-screen p-6 md:mr-6 md:ml-96">
+    <div className="min-h-screen p-6 lg:mr-2 lg:ml-80 xl:mr-6 xl:ml-96">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -183,13 +183,13 @@ export default function ManagePage({
         className="mx-auto max-w-6xl space-y-6"
       >
         {/* Page Header */}
-        <div className="hover:border-dim-green dark:hover:border-bright-green relative mt-4 rounded-2xl border border-gray-300 bg-gray-100 p-8 shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg md:mt-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+        <div className="hover:border-dim-green dark:hover:border-bright-green relative mt-4 rounded-2xl border border-gray-300 bg-gray-100 p-8 shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg lg:mt-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
           <div className="mb-6 flex flex-col items-center justify-between md:flex-row">
-            <div>
-              <h1 className="mb-2 text-2xl font-bold text-black md:text-4xl dark:text-white">
+            <div className="xl:w-none lg:w-3/5">
+              <h1 className="mb-2 text-2xl font-bold text-black xl:text-4xl dark:text-white">
                 Manage Your HotDog Names
               </h1>
-              <p className="text-md text-gray-600 md:text-lg dark:text-gray-300">
+              <p className="text-md lg:text-md text-gray-600 xl:text-lg dark:text-gray-300">
                 Control and configure your Web3 identity portfolio
               </p>
             </div>
@@ -198,7 +198,7 @@ export default function ManagePage({
               onClick={changeToSearch}
             >
               <Plus size={20} />
-              Register New Name
+              Register Name
             </button>
           </div>
 
@@ -247,7 +247,7 @@ export default function ManagePage({
         {isConnected && (
           <div className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 p-8 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
             <div className="mb-6 flex flex-col items-center justify-between md:flex-row">
-              <h2 className="flex items-center gap-3 text-lg font-bold text-black md:text-2xl dark:text-white">
+              <h2 className="flex items-center gap-3 text-lg font-bold text-black md:text-2xl lg:text-xl xl:text-2xl dark:text-white">
                 <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-green-100 dark:bg-green-800">
                   <div className="h-4 w-4 rounded-full bg-green-500 dark:bg-green-400"></div>
                 </div>
@@ -292,7 +292,7 @@ export default function ManagePage({
                     <div className="flex flex-col items-center justify-between md:flex-row">
                       <div className="flex flex-col items-center gap-4 md:flex-row">
                         <div
-                          className="group relative flex h-36 w-36 cursor-pointer items-center justify-center rounded-xl bg-green-100 md:h-12 md:w-12 dark:bg-green-900/30"
+                          className="group relative flex h-36 w-36 cursor-pointer items-center justify-center rounded-xl bg-green-100 lg:h-12 lg:w-12 dark:bg-green-900/30"
                           onMouseEnter={() => setHoveredDomain(domain.name)}
                           onMouseLeave={() => setHoveredDomain(null)}
                         >
@@ -315,8 +315,8 @@ export default function ManagePage({
                           )}
                         </div>
                         <div>
-                          <div className="flex flex-col items-center md:flex-row md:gap-2">
-                            <h3 className="font-mono text-xl font-bold text-black dark:text-white">
+                          <div className="flex flex-col items-center lg:flex-row lg:gap-2">
+                            <h3 className="font-mono text-xl font-bold text-black lg:text-base xl:text-xl dark:text-white">
                               {domain.name}
                             </h3>
                             {domain.isMain && (
@@ -326,7 +326,7 @@ export default function ManagePage({
                               </span>
                             )}
                           </div>
-                          <div className="mt-4 flex flex-col items-center text-sm text-gray-600 md:mt-0 md:flex-row md:gap-4 dark:text-gray-400">
+                          <div className="mt-4 flex flex-col items-center text-sm text-gray-600 md:mt-6 lg:mt-0 lg:flex-row lg:gap-4 dark:text-gray-400">
                             <span
                               className={`rounded-full px-2 py-1 text-xs ${
                                 isExpiringSoon(domain.expiration)
@@ -345,7 +345,7 @@ export default function ManagePage({
                         </div>
                       </div>
 
-                      <div className="mt-4 flex items-center gap-3 md:mt-0">
+                      <div className="mt-4 flex items-center gap-3 lg:mt-0">
                         <button
                           className="rounded-lg p-2 text-gray-600 transition-all duration-300 hover:bg-green-50 hover:text-green-500 dark:text-gray-400 dark:hover:bg-green-900/20"
                           onClick={() => {

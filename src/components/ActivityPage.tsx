@@ -134,19 +134,20 @@ export default function ActivityPage() {
   };
 
   return (
-    <div className="min-h-screen p-6 md:mr-6 md:ml-96">
+    <div className="min-h-screen p-6 lg:mr-2 lg:ml-80 xl:mr-6 xl:ml-96">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="mx-auto max-w-6xl space-y-6"
       >
-        <div className="hover:border-dim-green dark:hover:border-bright-green relative mt-6 rounded-2xl border border-gray-300 bg-gray-100 py-6 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg md:mt-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
-          <h1 className="mb-2 text-2xl font-bold text-black md:text-4xl dark:text-white">
+        <div className="hover:border-dim-green dark:hover:border-bright-green relative mt-6 rounded-2xl border border-gray-300 bg-gray-100 py-6 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg lg:mt-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+          <h1 className="mb-2 text-2xl font-bold text-black lg:text-3xl xl:text-4xl dark:text-white">
             Domain Activity
           </h1>
-          <p className="px-2 text-gray-600 md:px-0 dark:text-gray-300">
-            All sales, mints, and transfers are shown here.
+          <p className="px-2 text-gray-600 lg:px-0 dark:text-gray-300">
+            All registrations, renewals, expirations and transfers are shown
+            here.
           </p>
         </div>
 
@@ -193,7 +194,7 @@ export default function ActivityPage() {
                   >
                     <div className="flex flex-col items-center gap-4 md:flex-row">
                       <div
-                        className={`flex h-10 w-10 items-center justify-center rounded-lg ${getTypeStyles(evt.type).labelBg} ${getTypeStyles(evt.type).labelText}`}
+                        className={`flex h-10 w-10 items-center justify-center rounded-lg ${getTypeStyles(evt.type).labelBg} ${getTypeStyles(evt.type).labelText} md:h-10 md:w-10`}
                       >
                         {getIcon(evt.type)}
                       </div>
@@ -208,28 +209,28 @@ export default function ActivityPage() {
                             {evt.domain}.{evt.tld}
                           </span>
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <div className="text-left text-sm text-gray-600 dark:text-gray-400">
                           {evt.type === "register" && (
                             <span>
-                              {width > 745
+                              {width > 1024
                                 ? evt.from
                                 : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}
                             </span>
                           )}
                           {evt.type === "renew" && (
                             <span>
-                              {width > 745
+                              {width > 1024
                                 ? evt.from
                                 : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}
                             </span>
                           )}
                           {evt.type === "transfer" && (
                             <span>
-                              {width > 745
+                              {width > 1024
                                 ? evt.from
                                 : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}{" "}
                               →{" "}
-                              {width > 745
+                              {width > 1024
                                 ? evt.to
                                 : `${evt.to?.slice(0, 6)}...${evt.to?.slice(-4)}`}
                             </span>
@@ -237,7 +238,7 @@ export default function ActivityPage() {
                           {evt.type === "expire" && (
                             <span>
                               Expired (was owned by{" "}
-                              {width > 745
+                              {width > 1024
                                 ? evt.from
                                 : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}
                               )
@@ -246,7 +247,7 @@ export default function ActivityPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="mt-4 flex items-center gap-3 text-sm text-gray-600 md:mt-0 dark:text-gray-400">
+                    <div className="mt-4 flex items-center gap-3 text-sm text-gray-600 lg:mt-0 dark:text-gray-400">
                       <div className="flex items-center gap-1">
                         <Clock size={14} />{" "}
                         <span>

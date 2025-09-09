@@ -56,6 +56,24 @@ export default function GuidePage() {
       duration: "12 min",
       difficulty: "Intermediate",
       category: "Management"
+    },
+    {
+      title: "Getting Started with HotDog Names 2",
+      duration: "5 min",
+      difficulty: "Beginner",
+      category: "Basics"
+    },
+    {
+      title: "Setting Up Domain Resolvers 2",
+      duration: "8 min",
+      difficulty: "Intermediate",
+      category: "Configuration"
+    },
+    {
+      title: "Managing Multiple Domains 2",
+      duration: "12 min",
+      difficulty: "Intermediate",
+      category: "Management"
     }
   ];
 
@@ -83,7 +101,7 @@ export default function GuidePage() {
   ];
 
   return (
-    <div className="min-h-screen p-6 md:mr-6 md:ml-96">
+    <div className="min-h-screen p-6 lg:mr-2 lg:ml-80 xl:mr-6 xl:ml-96">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -91,11 +109,11 @@ export default function GuidePage() {
         className="mx-auto max-w-6xl space-y-6"
       >
         {/* Page Header */}
-        <div className="hover:border-dim-green dark:hover:border-bright-green relative mt-6 rounded-2xl border border-gray-300 bg-gray-100 py-6 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg md:mt-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
-          <h1 className="mb-4 text-2xl font-bold text-black md:text-4xl dark:text-white">
+        <div className="hover:border-dim-green dark:hover:border-bright-green relative mt-6 rounded-2xl border border-gray-300 bg-gray-100 py-6 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg lg:mt-0 lg:px-4 xl:px-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
+          <h1 className="mb-4 text-2xl font-bold text-black xl:text-4xl dark:text-white">
             HotDog Name Service Guide
           </h1>
-          <p className="text-md text-gray-600 md:text-lg dark:text-gray-300">
+          <p className="text-md text-gray-600 xl:text-lg dark:text-gray-300">
             Everything you need to know about using and managing HotDog names on
             Abstract
           </p>
@@ -107,7 +125,7 @@ export default function GuidePage() {
             <Play className="text-green-500" />
             Quick Start Guide
           </h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
             {quickStartSteps.map((step, index) => (
               <motion.div
                 key={step.step}
@@ -139,7 +157,7 @@ export default function GuidePage() {
             <BookOpen className="text-green-500" />
             Video Tutorials
           </h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {tutorials.map((tutorial, index) => (
               <motion.div
                 key={tutorial.title}

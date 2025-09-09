@@ -137,7 +137,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
     <>
       {/* Mobile Menu Button */}
       <motion.button
-        className="fixed top-4 left-4 z-50 rounded-xl border border-gray-200 bg-white p-3 text-gray-700 shadow-lg transition-all duration-200 hover:bg-gray-50 hover:text-gray-900 md:hidden dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+        className="fixed top-4 left-4 z-50 rounded-xl border border-gray-200 bg-white p-3 text-gray-700 shadow-lg transition-all duration-200 hover:bg-gray-50 hover:text-gray-900 lg:hidden dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       >
@@ -146,10 +146,10 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
 
       {/* Floating Sidebar Navigation */}
       <motion.nav
-        className={`fixed top-6 z-40 h-[calc(100vh-48px)] w-80 transform rounded-3xl border border-gray-300 bg-gray-100 shadow-xl/30 shadow-black transition-all duration-300 ease-in-out md:left-6 md:w-72 dark:border-gray-600 dark:bg-[#1e1e1e] dark:shadow-white ${
+        className={`fixed top-6 z-40 h-[calc(100vh-48px)] w-80 transform rounded-3xl border border-gray-300 bg-gray-100 shadow-xl/30 shadow-black transition-all duration-300 ease-in-out lg:left-6 lg:w-72 dark:border-gray-600 dark:bg-[#1e1e1e] dark:shadow-white ${
           isMobileMenuOpen
             ? "left-5 translate-x-0"
-            : "left-[-12px] -translate-x-full md:translate-x-0"
+            : "left-[-12px] -translate-x-full lg:translate-x-0"
         }`}
         initial={{ x: -50 }}
         animate={{ x: isMobileMenuOpen ? 0 : 8 }}
@@ -362,7 +362,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
           </nav>
           {/* Social Links */}
 
-          <div className="border-t border-gray-400 pt-6 transition-colors duration-300 dark:border-gray-500">
+          <div className="border-t border-gray-400 pt-6 transition-colors duration-300 xl:mt-2 xl:pt-2 2xl:mt-0 2xl:pt-6 dark:border-gray-500">
             <div className="flex justify-center space-x-3">
               {[
                 {
@@ -415,7 +415,7 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
       {/* Overlay for mobile */}
       {isMobileMenuOpen && (
         <motion.div
-          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

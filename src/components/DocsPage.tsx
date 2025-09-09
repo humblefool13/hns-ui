@@ -48,7 +48,7 @@ function CodeBlock({ code }: { code: string }) {
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen p-6 md:mr-6 md:ml-96">
+    <div className="min-h-screen p-6 lg:mr-2 lg:ml-80 xl:mr-6 xl:ml-96">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -56,7 +56,7 @@ export default function DocsPage() {
         className="mx-auto max-w-6xl space-y-6"
       >
         <div className="hover:border-dim-green dark:hover:border-bright-green rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
-          <h1 className="mb-3 text-2xl font-bold text-black md:text-4xl dark:text-white">
+          <h1 className="mb-3 text-2xl font-bold text-black lg:text-3xl xl:text-4xl dark:text-white">
             HNS Developer Documentation
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
@@ -71,7 +71,7 @@ export default function DocsPage() {
         <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
           <div className="flex items-center gap-3">
             <FileText className="text-green-500" />
-            <h2 className="text-lg font-semibold text-black md:text-2xl dark:text-white">
+            <h2 className="text-lg font-semibold text-black lg:text-2xl dark:text-white">
               Architecture Overview
             </h2>
           </div>
@@ -117,7 +117,7 @@ NameService (per TLD)
         <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
           <div className="flex items-center gap-3">
             <Code className="text-blue-500" />
-            <h2 className="text-lg font-semibold text-black md:text-2xl dark:text-white">
+            <h2 className="text-lg font-semibold text-black lg:text-2xl dark:text-white">
               Node.js RPC setup + Basic Examples
             </h2>
           </div>
@@ -156,7 +156,7 @@ const manager = getContract({
         </div>
 
         {/* Core Reads */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
             <div className="flex items-center gap-3">
               <Link className="text-blue-500" />
@@ -193,7 +193,7 @@ const manager = getContract({
         <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
           <div className="flex items-center gap-3">
             <FileText className="text-green-500" />
-            <h2 className="text-lg font-semibold text-black md:text-2xl dark:text-white">
+            <h2 className="text-lg font-semibold text-black lg:text-2xl dark:text-white">
               TLD discovery and NameService access
             </h2>
           </div>
@@ -261,7 +261,7 @@ const manager = getContract({
         </div>
 
         {/* Additional Reads */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="hover:border-dim-green dark:hover:border-bright-green space-y-4 rounded-2xl border border-gray-200/50 bg-gray-100 p-8 backdrop-blur-xl transition-all duration-300 hover:bg-gray-200/80 hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
             <div className="flex items-center gap-3">
               <FileText className="text-green-500" />

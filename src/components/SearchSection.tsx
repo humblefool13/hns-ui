@@ -279,27 +279,27 @@ export default function SearchSection() {
   };
 
   return (
-    <section className="md:py-none px-2 py-8 md:mr-6 md:ml-96 md:px-6 2xl:py-12">
-      <div className="mx-auto max-w-6xl">
+    <section className="lg:py-none min-h-screen px-2 py-8 sm:flex sm:items-center sm:justify-center md:block lg:mr-2 lg:ml-80 lg:px-6 xl:mr-6 xl:ml-96 2xl:py-12">
+      <div className="md:w-none xl:w-none mx-auto max-w-6xl sm:w-[80%] lg:w-full">
         {/* Hero Card */}
         <motion.div
-          className="hover:border-dim-green dark:hover:border-bright-green md:px-none relative mt-12 rounded-2xl border border-gray-300 bg-gray-100 px-4 pt-12 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg md:mt-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black"
+          className="hover:border-dim-green dark:hover:border-bright-green lg:px-none relative mt-12 rounded-2xl border border-gray-300 bg-gray-100 px-4 pt-12 text-center shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg lg:mt-0 dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <motion.div
-            className="group absolute top-[-50px] right-0 z-20 cursor-pointer md:top-6 md:right-6"
+            className="group absolute top-[-50px] right-0 z-20 cursor-pointer lg:top-[-15px] lg:right-[-15px] xl:top-[-15px] xl:right-[-15px] 2xl:top-6 2xl:right-6"
             initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
           >
-            <div className="relative hidden md:block">
+            <div className="relative hidden lg:block">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 opacity-80 blur-sm transition-opacity duration-300 group-hover:opacity-100">
                 <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-yellow-300 via-yellow-400 to-amber-500"></div>
               </div>
-              <div className="relative rounded-3xl border-2 border-yellow-300 bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 p-2 shadow-2xl transition-all duration-300 group-hover:border-yellow-200 md:rounded-full md:p-4">
-                <div className="mb-1 text-lg text-white transition-transform duration-300 group-hover:scale-110 md:text-2xl">
+              <div className="relative rounded-3xl border-2 border-yellow-300 bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 p-2 shadow-2xl transition-all duration-300 group-hover:border-yellow-200 lg:rounded-full lg:p-4">
+                <div className="mb-1 text-lg text-white transition-transform duration-300 group-hover:scale-110 lg:text-2xl">
                   👑
                 </div>
                 <div className="text-xs font-bold tracking-wider text-white transition-transform duration-300 group-hover:scale-105">
@@ -332,7 +332,7 @@ export default function SearchSection() {
 
           {/* Main Heading */}
           <motion.h1
-            className="pb-10 text-3xl font-bold drop-shadow-lg transition-all duration-300 md:text-7xl"
+            className="pb-10 text-3xl font-bold drop-shadow-lg transition-all duration-300 lg:text-5xl xl:text-7xl"
             style={{
               background:
                 "linear-gradient(45deg, #03d26e, #41f09c, #00c466, #22c55e, #16a34a, #03d26e)",
@@ -353,7 +353,7 @@ export default function SearchSection() {
 
           {/* Subtitle */}
           <motion.p
-            className="text-md mx-auto mb-12 max-w-3xl leading-relaxed font-medium text-gray-700 transition-colors duration-300 md:text-2xl dark:text-gray-300"
+            className="text-md mx-auto mb-12 max-w-3xl leading-relaxed font-medium text-gray-700 transition-colors duration-300 lg:text-xl xl:text-2xl dark:text-gray-300"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
@@ -391,20 +391,20 @@ export default function SearchSection() {
 
           {/* Search Section */}
           <motion.div
-            className="relative mx-auto mb-8 max-w-2xl"
+            className="relative mx-auto mb-8 max-w-2xl lg:max-w-lg xl:max-w-2xl"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
           >
             <div className="relative">
               <Search
-                className="absolute top-1/2 left-3 z-10 -translate-y-1/2 transform text-gray-400 transition-colors duration-300 md:left-6 dark:text-gray-500"
-                size={width > 768 ? 24 : 20}
+                className="absolute top-1/2 left-3 z-10 -translate-y-1/2 transform text-gray-400 transition-colors duration-300 lg:left-6 dark:text-gray-500"
+                size={width >= 768 ? 24 : 20}
               />
               <input
                 type="text"
                 placeholder={
-                  width > 768
+                  width >= 768
                     ? "Search for a name like sausage.hotdogs"
                     : "sausage.hotdogs"
                 }
@@ -413,12 +413,12 @@ export default function SearchSection() {
                   setDomainName(e.target.value);
                   setHasAttemptedSearch(false);
                 }}
-                className="bg-background text-md relative w-full rounded-3xl border-2 border-gray-300 px-10 py-4 text-black placeholder-gray-400 shadow-lg transition-all duration-300 focus:border-green-400 focus:ring-4 focus:ring-green-300 focus:outline-none md:px-16 md:py-6 md:text-xl dark:border-gray-600 dark:text-white dark:placeholder-gray-500 dark:shadow-md dark:shadow-white"
+                className="bg-background text-md lg-py-2 relative w-full rounded-3xl border-2 border-gray-300 px-10 py-4 text-black placeholder-gray-400 shadow-lg transition-all duration-300 focus:border-green-400 focus:ring-4 focus:ring-green-300 focus:outline-none lg:px-16 lg:text-xl xl:py-6 dark:border-gray-600 dark:text-white dark:placeholder-gray-500 dark:shadow-md dark:shadow-white"
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
               <Sparkles
-                className="absolute top-1/2 right-3 z-10 -translate-y-1/2 transform text-gray-400 transition-colors duration-300 md:right-6 dark:text-gray-500"
-                size={width > 768 ? 24 : 20}
+                className="absolute top-1/2 right-3 z-10 -translate-y-1/2 transform text-gray-400 transition-colors duration-300 lg:right-6 dark:text-gray-500"
+                size={width >= 768 ? 24 : 20}
               />
             </div>
 
@@ -517,7 +517,7 @@ export default function SearchSection() {
                     </div>
                   </motion.div>
 
-                  <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <div className="rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 dark:border-white/10">
                       <div className="mb-2 flex items-center gap-3">
                         <Crown className="text-yellow-500" size={18} />
@@ -650,7 +650,7 @@ export default function SearchSection() {
                     </div>
                   </motion.div>
 
-                  <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <div className="rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 dark:border-white/10">
                       <div className="mb-3 flex items-center gap-3">
                         <Calendar className="text-blue-500" size={18} />
