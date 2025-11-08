@@ -268,10 +268,71 @@ export default function SearchSection() {
 
     setIsRegistering(true);
     try {
-      const tx = await registerDomain(result.name, result.tld, selectedYears);
+      // Capture the domain info before the async operation
+      const domainName = result.name;
+      const domainTld = result.tld;
+      const domainFull = result.domain;
+
+      const tx = await registerDomain(domainName, domainTld, selectedYears);
       setTx(tx);
-      // Refresh the search to show the domain is now taken
-      await handleSearch();
+
+      // Update the result to show the domain is now registered
+      // Poll for the domain to be registered (with retries)
+      const checkDomainStatus = async (retries = 5) => {
+        for (let i = 0; i < retries; i++) {
+          await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds between retries
+          try {
+            const domainInfo = await resolveDomainRPC(domainName, domainTld);
+            if (
+              domainInfo &&
+              domainInfo.owner !==
+                "0x0000000000000000000000000000000000000000" &&
+              Number(domainInfo.expiration) * 1000 > Date.now()
+            ) {
+              // Domain is now registered, update the result
+              const expirationDate = new Date(
+                Number(domainInfo.expiration) * 1000
+              );
+              setResult({
+                type: "found",
+                domain: domainFull,
+                tld: domainTld,
+                name: domainName,
+                owner: domainInfo.owner,
+                expiration: expirationDate.toLocaleDateString(),
+                nftAddress: domainInfo.nftAddress,
+                tokenId: domainInfo.tokenId.toString(),
+                marketplaces: [
+                  {
+                    name: "OpenSea",
+                    url: `https://opensea.io/item/abstract/${domainInfo.nftAddress}/${domainInfo.tokenId}`,
+                    icon: OpenSeaIcon
+                  },
+                  {
+                    name: "Magic Eden",
+                    url: `https://magiceden.io/item-details/abstract/${domainInfo.nftAddress}/${domainInfo.tokenId}`,
+                    icon: MagicEdenIcon
+                  },
+                  {
+                    name: "Mintify",
+                    url: `https://app.mintify.com/nft/abstract/${domainInfo.nftAddress}/${domainInfo.tokenId}`,
+                    icon: MintifyIcon
+                  }
+                ]
+              });
+              return; // Success, exit the retry loop
+            }
+          } catch (error) {
+            console.error(
+              `Error checking domain status (attempt ${i + 1}/${retries}):`,
+              error
+            );
+          }
+        }
+      };
+
+      // Start checking domain status
+      checkDomainStatus();
     } catch (error) {
       console.error("Error registering domain:", error);
       setValidationError("Failed to register domain. Please try again.");
@@ -317,8 +378,6 @@ export default function SearchSection() {
                     <span>👑</span>
                   </div>
                   <div className="space-y-1 text-xs text-yellow-700 dark:text-yellow-300">
-                    <p className="font-semibold">Abstract Portal:</p>
-                    <p>• Earn XP for holding NFTs</p>
                     <p className="mt-2 font-semibold">HotDogs Portal:</p>
                     <p>• 10 points per NFT</p>
                     <p>• Bonus from badges</p>

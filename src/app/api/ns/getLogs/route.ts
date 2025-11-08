@@ -44,17 +44,10 @@ export async function POST(request: Request) {
       return await contract.read.tokenToDomain([id]);
     };
 
-    // const sig1 = keccak256(toHex("DomainRegistered(uint256,address,uint256)"));
-    // const sig2 = keccak256(toHex("DomainRenewed(uint256,address,uint256)"));
-    // const sig3 = keccak256(toHex("DomainTransferred(uint256,address,address)"));
-    // const sig4 = keccak256(toHex("DomainExpired(uint256,address)"));
-
-    const sig1 = keccak256(
-      toHex("DomainRegistered(string,address,uint256,uint256)")
-    );
-    const sig2 = keccak256(toHex("DomainRenewed(string,address,uint256)"));
-    const sig3 = keccak256(toHex("DomainTransferred(string,address,address)"));
-    const sig4 = keccak256(toHex("DomainExpired(string,address)"));
+    const sig1 = keccak256(toHex("DomainRegistered(uint256,address,uint256)"));
+    const sig2 = keccak256(toHex("DomainRenewed(uint256,address,uint256)"));
+    const sig3 = keccak256(toHex("DomainTransferred(uint256,address,address)"));
+    const sig4 = keccak256(toHex("DomainExpired(uint256,address)"));
 
     const route = "eth_getLogs";
 

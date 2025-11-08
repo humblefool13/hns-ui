@@ -26,9 +26,10 @@ type EventItem = {
 };
 
 export default function ActivityPage() {
-  const { nameServiceContracts, getRegisteredTLDsRPC, hnsManagerContract } =
+  const { nameServiceContracts, getRegisteredTLDsRPC, getMainDomain } =
     useContract();
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [processedEvents, setProcessedEvents] = useState<EventItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [width, setWidth] = useState(1024); // Default to desktop width for SSR
@@ -62,6 +63,7 @@ export default function ActivityPage() {
         const tlds = await getRegisteredTLDsRPC();
         if (!tlds || tlds.length === 0) {
           setEvents([]);
+          setProcessedEvents([]);
           setIsLoading(false);
           return;
         }
@@ -80,6 +82,43 @@ export default function ActivityPage() {
         }
         events = events.sort((a, b) => b.timestamp - a.timestamp);
         setEvents(events);
+
+        // Process events to resolve domain names
+        const processed = await Promise.all(
+          events.map(async (element) => {
+            const processedElement = { ...element };
+
+            // Resolve from address to domain name if it exists
+            if (element.from && element.from.startsWith("0x")) {
+              try {
+                const fromName = await getMainDomain(
+                  element.from as `0x${string}`
+                );
+                if (fromName && fromName.length > 0) {
+                  processedElement.from = fromName;
+                }
+              } catch (error) {
+                console.error("Error resolving from domain:", error);
+              }
+            }
+
+            // Resolve to address to domain name if it exists
+            if (element.to && element.to.startsWith("0x")) {
+              try {
+                const toName = await getMainDomain(element.to as `0x${string}`);
+                if (toName && toName.length > 0) {
+                  processedElement.to = toName;
+                }
+              } catch (error) {
+                console.error("Error resolving to domain:", error);
+              }
+            }
+
+            return processedElement;
+          })
+        );
+
+        setProcessedEvents(processed);
       } catch (error) {
         setError("Failed to fetch events: " + error);
       } finally {
@@ -178,7 +217,7 @@ export default function ActivityPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
-              {events
+              {processedEvents
                 .sort(
                   (a, b) =>
                     new Date(b.timestamp).getTime() -
@@ -212,35 +251,45 @@ export default function ActivityPage() {
                         <div className="text-left text-sm text-gray-600 dark:text-gray-400">
                           {evt.type === "register" && (
                             <span>
-                              {width > 1024
+                              {!evt.from?.startsWith("0x")
                                 ? evt.from
-                                : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}
+                                : width > 1024
+                                  ? evt.from
+                                  : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}
                             </span>
                           )}
                           {evt.type === "renew" && (
                             <span>
-                              {width > 1024
+                              {!evt.from?.startsWith("0x")
                                 ? evt.from
-                                : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}
+                                : width > 1024
+                                  ? evt.from
+                                  : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}
                             </span>
                           )}
                           {evt.type === "transfer" && (
                             <span>
-                              {width > 1024
+                              {!evt.from?.startsWith("0x")
                                 ? evt.from
-                                : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}{" "}
+                                : width > 1024
+                                  ? evt.from
+                                  : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}{" "}
                               →{" "}
-                              {width > 1024
+                              {!evt.to?.startsWith("0x")
                                 ? evt.to
-                                : `${evt.to?.slice(0, 6)}...${evt.to?.slice(-4)}`}
+                                : width > 1024
+                                  ? evt.to
+                                  : `${evt.to?.slice(0, 6)}...${evt.to?.slice(-4)}`}
                             </span>
                           )}
                           {evt.type === "expire" && (
                             <span>
                               Expired (was owned by{" "}
-                              {width > 1024
+                              {!evt.from?.startsWith("0x")
                                 ? evt.from
-                                : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}
+                                : width > 1024
+                                  ? evt.from
+                                  : `${evt.from?.slice(0, 6)}...${evt.from?.slice(-4)}`}
                               )
                             </span>
                           )}

@@ -28,7 +28,8 @@ export default function ManagePage({
     transferDomain,
     renewDomain,
     getDomainPrice,
-    setMainDomain
+    setMainDomain,
+    resolveDomain
   } = useContract();
 
   const [domains, setDomains] = useState<DomainData[]>([]);
@@ -37,11 +38,14 @@ export default function ManagePage({
   const [transferAddress, setTransferAddress] = useState("");
   const [transferDomainName, setTransferDomainName] = useState("");
   const [showTransferModal, setShowTransferModal] = useState(false);
+  const [isTransferring, setIsTransferring] = useState(false);
+  const [transferError, setTransferError] = useState<string | null>(null);
   const [renewDomainName, setRenewDomainName] = useState("");
   const [renewYears, setRenewYears] = useState(1);
   const [showRenewModal, setShowRenewModal] = useState(false);
   const [renewPrice, setRenewPrice] = useState(0);
   const [hoveredDomain, setHoveredDomain] = useState<string | null>(null);
+  const [isSettingMain, setIsSettingMain] = useState(false);
   const { login } = useLoginWithAbstract();
   const [width, setWidth] = useState(1024); // Default to desktop width for SSR
 
@@ -115,19 +119,135 @@ export default function ManagePage({
   }, [isConnected, address]);
 
   const handleTransfer = async () => {
-    if (!transferAddress || !transferDomainName) return;
+    if (!transferAddress || !transferDomainName || isTransferring) return;
+
+    setIsTransferring(true);
+    setTransferError(null);
 
     try {
       const [name, tld] = transferDomainName.split(".");
-      if (name && tld) {
-        await transferDomain(name, tld, transferAddress as `0x${string}`);
-        setShowTransferModal(false);
-        setTransferAddress("");
-        setTransferDomainName("");
-        loadDomains();
+      if (!name || !tld) {
+        setTransferError("Invalid domain format");
+        setIsTransferring(false);
+        return;
       }
-    } catch (error) {
+
+      let recipientAddress: string = transferAddress.trim();
+
+      // If input is not an address (doesn't start with 0x), treat it as a domain
+      if (!recipientAddress.startsWith("0x")) {
+        // Validate domain format
+        if (!recipientAddress.includes(".")) {
+          setTransferError(
+            "Invalid format. Please enter a valid address (0x...) or domain (name.tld)"
+          );
+          setIsTransferring(false);
+          return;
+        }
+
+        const [recName, recTld] = recipientAddress.split(".");
+        if (!recName || !recTld) {
+          setTransferError(
+            "Invalid domain format. Please use format: name.tld"
+          );
+          setIsTransferring(false);
+          return;
+        }
+
+        // Resolve the domain to get the owner address
+        const domainResult = await resolveDomain(
+          recName.toLowerCase(),
+          recTld.toLowerCase()
+        );
+
+        if (!domainResult) {
+          setTransferError(
+            `Domain "${recipientAddress}" does not exist or could not be resolved`
+          );
+          setIsTransferring(false);
+          return;
+        }
+
+        // Check if domain is expired
+        const expirationTime = Number(domainResult.expiration) * 1000; // Convert to milliseconds
+        const now = Date.now();
+        if (expirationTime <= now) {
+          setTransferError(
+            `Domain "${recipientAddress}" has expired and cannot be used for transfers`
+          );
+          setIsTransferring(false);
+          return;
+        }
+
+        // Check if domain has a valid owner
+        if (
+          !domainResult.owner ||
+          domainResult.owner === "0x0000000000000000000000000000000000000000"
+        ) {
+          setTransferError(
+            `Domain "${recipientAddress}" does not have a valid owner`
+          );
+          setIsTransferring(false);
+          return;
+        }
+
+        recipientAddress = domainResult.owner;
+      } else {
+        // Validate address format
+        if (!/^0x[a-fA-F0-9]{40}$/.test(recipientAddress)) {
+          setTransferError(
+            "Invalid address format. Please enter a valid Ethereum address"
+          );
+          setIsTransferring(false);
+          return;
+        }
+      }
+
+      // Validate recipient address is valid
+      if (
+        !recipientAddress ||
+        recipientAddress === "0x0000000000000000000000000000000000000000"
+      ) {
+        setTransferError("Invalid recipient address");
+        setIsTransferring(false);
+        return;
+      }
+
+      // Perform the transfer
+      await transferDomain(name, tld, recipientAddress as `0x${string}`);
+
+      // Success - close modal and refresh
+      setShowTransferModal(false);
+      setTransferAddress("");
+      setTransferDomainName("");
+      setTransferError(null);
+      // Refresh the list to show changes
+      await loadDomains();
+    } catch (error: any) {
       console.error("Error transferring domain:", error);
+
+      // Provide user-friendly error messages
+      if (error?.message) {
+        if (
+          error.message.includes("revert") ||
+          error.message.includes("execution reverted")
+        ) {
+          setTransferError(
+            "Transfer failed. The transaction was rejected or reverted."
+          );
+        } else if (
+          error.message.includes("user rejected") ||
+          error.message.includes("User rejected")
+        ) {
+          setTransferError("Transfer cancelled. The transaction was rejected.");
+        } else {
+          setTransferError(`Transfer failed: ${error.message}`);
+        }
+      } else {
+        setTransferError("Transfer failed. Please try again.");
+      }
+    } finally {
+      setIsTransferring(false);
     }
   };
 
@@ -154,12 +274,20 @@ export default function ManagePage({
   };
 
   const handleSetMainDomain = async (domainName: string) => {
+    if (isSettingMain) return;
+
+    setIsSettingMain(true);
     try {
       await setMainDomain(domainName);
       setMainDomainState(domainName);
-      loadDomains(); // Refresh the list to update the main domain status
+      // Refresh the list to update the main domain status
+      await loadDomains();
+      // Dispatch event to notify Navbar to refresh
+      window.dispatchEvent(new CustomEvent("mainDomainChanged"));
     } catch (error) {
       console.error("Error setting main domain:", error);
+    } finally {
+      setIsSettingMain(false);
     }
   };
 
@@ -363,6 +491,8 @@ export default function ManagePage({
                           className="rounded-lg p-2 text-gray-600 transition-all duration-300 hover:bg-red-50 hover:text-red-500 dark:text-gray-400 dark:hover:bg-red-900/20"
                           onClick={() => {
                             setTransferDomainName(domain.name);
+                            setTransferAddress("");
+                            setTransferError(null);
                             setShowTransferModal(true);
                           }}
                           title="Transfer Domain"
@@ -378,7 +508,7 @@ export default function ManagePage({
                           onClick={() =>
                             !domain.isMain && handleSetMainDomain(domain.name)
                           }
-                          disabled={domain.isMain}
+                          disabled={domain.isMain || isSettingMain}
                           title={
                             domain.isMain
                               ? "Already main domain"
@@ -420,29 +550,48 @@ export default function ManagePage({
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Recipient Address
+                    Recipient
                   </label>
                   <input
                     type="text"
                     value={transferAddress}
-                    onChange={(e) => setTransferAddress(e.target.value)}
-                    placeholder="0x..."
-                    className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-transparent focus:ring-2 focus:ring-green-500 dark:border-gray-600 dark:bg-black dark:text-white dark:placeholder-gray-400"
+                    onChange={(e) => {
+                      setTransferAddress(e.target.value);
+                      setTransferError(null); // Clear error when user types
+                    }}
+                    placeholder="vind.rise or 0x..."
+                    className={`w-full rounded-lg border px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-transparent focus:ring-2 dark:bg-black dark:text-white dark:placeholder-gray-400 ${
+                      transferError
+                        ? "border-red-500 bg-red-50 focus:ring-red-500 dark:border-red-500 dark:bg-red-900/20"
+                        : "border-gray-300 bg-gray-50 focus:ring-green-500 dark:border-gray-600"
+                    }`}
                   />
+                  {transferError && (
+                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                      {transferError}
+                    </p>
+                  )}
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Enter a wallet address (0x...) or a domain name (name.tld)
+                  </p>
                 </div>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setShowTransferModal(false)}
+                    onClick={() => {
+                      setShowTransferModal(false);
+                      setTransferAddress("");
+                      setTransferError(null);
+                    }}
                     className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleTransfer}
-                    disabled={!transferAddress}
+                    disabled={!transferAddress || isTransferring}
                     className="flex-1 rounded-lg bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600 disabled:bg-gray-400"
                   >
-                    Transfer
+                    {isTransferring ? "Transferring..." : "Transfer"}
                   </button>
                 </div>
               </div>

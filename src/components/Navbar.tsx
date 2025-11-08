@@ -114,6 +114,16 @@ export default function Navbar({ currentPage, setCurrentPage }: NavbarProps) {
       }
     };
     fetchBlockchainData();
+
+    // Listen for main domain changes
+    const handleMainDomainChange = () => {
+      fetchBlockchainData();
+    };
+
+    window.addEventListener("mainDomainChanged", handleMainDomainChange);
+    return () => {
+      window.removeEventListener("mainDomainChanged", handleMainDomainChange);
+    };
   }, [isConnected, address, hnsManagerContract]);
 
   // Don't render theme-dependent content until mounted to prevent hydration mismatch
