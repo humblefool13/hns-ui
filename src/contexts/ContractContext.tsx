@@ -269,7 +269,9 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       throw new Error("HNS Manager contract not initialized");
     }
     try {
-      const logs = await hnsManagerContract.write.setMainDomain([domain]);
+      const logs = await hnsManagerContract.write.setMainDomain(
+        domain.split(".")
+      );
       console.log(logs);
       return logs as string;
     } catch (err) {
@@ -291,9 +293,9 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
         throw new Error("Name service contract not initialized for " + tld);
       const price = getDomainPrice(name, years);
       const logs = await contract.write.register([name, BigInt(years)], {
-        value: parseEther(price.toString())
+        value: parseEther(price.toString()),
+        gas: BigInt(76874750)
       });
-      console.log(logs);
       return logs as string;
     } catch (err) {
       console.error("Error registering domain:", err);
@@ -312,9 +314,9 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
         throw new Error("Name service contract not initialized for " + tld);
       const price = getDomainPrice(name, years);
       const logs = await contract.write.renew([name, BigInt(years)], {
-        value: parseEther(price.toString())
+        value: parseEther(price.toString()),
+        gas: BigInt(96874750)
       });
-      console.log(logs);
       return logs as string;
     } catch (err) {
       console.error("Error renewing domain:", err);
@@ -331,8 +333,9 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       const contract = getNameServiceContract(tld);
       if (!contract)
         throw new Error("Name service contract not initialized for " + tld);
-      const logs = await contract.write.transferDomain([name, to]);
-      console.log(logs);
+      const logs = await contract.write.transferDomain([name, to], {
+        gas: BigInt(1405000)
+      });
       return logs as string;
     } catch (err) {
       console.error("Error transferring domain:", err);
