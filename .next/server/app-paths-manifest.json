@@ -1,0 +1,10 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/hns/resolve/route": "app/api/hns/resolve/route.js",
+  "/api/hns/reverseLookup/route": "app/api/hns/reverseLookup/route.js",
+  "/api/hns/contracts/route": "app/api/hns/contracts/route.js",
+  "/api/hns/tlds/route": "app/api/hns/tlds/route.js",
+  "/api/ns/getLogs/route": "app/api/ns/getLogs/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js"
+}
