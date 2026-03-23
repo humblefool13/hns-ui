@@ -151,55 +151,6 @@ export default function GuidePage() {
           </div>
         </div>
 
-        {/* Tutorials */}
-        <div className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 p-6 shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
-          <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-black dark:text-white">
-            <BookOpen className="text-green-500" />
-            Video Tutorials
-          </h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {tutorials.map((tutorial, index) => (
-              <motion.div
-                key={tutorial.title}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="group cursor-pointer rounded-xl border border-gray-200 p-6 transition-all duration-300 hover:border-green-500 hover:shadow-lg dark:border-gray-700"
-              >
-                <div className="mb-4 flex h-32 w-full items-center justify-center rounded-lg bg-gradient-to-br from-green-400 to-green-600 transition-transform duration-300 group-hover:scale-105">
-                  <Play className="text-white" size={48} />
-                </div>
-                <div className="mb-3 flex items-center gap-2">
-                  <span
-                    className={`rounded-full px-2 py-1 text-xs ${
-                      tutorial.difficulty === "Beginner"
-                        ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200"
-                        : tutorial.difficulty === "Intermediate"
-                          ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200"
-                          : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200"
-                    }`}
-                  >
-                    {tutorial.difficulty}
-                  </span>
-                  <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800 dark:bg-blue-900/30 dark:text-blue-200">
-                    {tutorial.category}
-                  </span>
-                </div>
-                <h3 className="mb-2 font-semibold text-black dark:text-white">
-                  {tutorial.title}
-                </h3>
-                <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                  <span>⏱️ {tutorial.duration}</span>
-                  <ArrowRight
-                    className="text-green-500 transition-transform duration-300 group-hover:translate-x-1"
-                    size={16}
-                  />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
         {/* FAQ Section */}
         <div className="hover:border-dim-green dark:hover:border-bright-green relative rounded-2xl border border-gray-300 bg-gray-100 p-6 shadow-md backdrop-blur-xl transition-all duration-300 hover:bg-white hover:shadow-lg dark:border-gray-700/50 dark:bg-[#1e1e1e] dark:hover:bg-black">
           <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-black dark:text-white">

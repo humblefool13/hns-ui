@@ -366,24 +366,16 @@ export default function SearchSection() {
                   👑
                 </div>
                 <div className="text-xs font-bold tracking-wider text-white transition-transform duration-300 group-hover:scale-105">
-                  XP REWARDS
+                  REWARDS
                 </div>
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:animate-pulse group-hover:opacity-100"></div>
               </div>
-              <div className="pointer-events-none absolute top-full left-1/2 mt-2 w-64 -translate-x-1/2 translate-y-2 transform rounded-2xl border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-amber-50 p-3 opacity-0 shadow-2xl transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 dark:border-yellow-600 dark:from-yellow-900/90 dark:to-amber-900/90">
+              <div className="pointer-events-none absolute top-full left-1/2 mt-2 w-48 -translate-x-1/2 translate-y-2 transform rounded-2xl border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-amber-50 p-3 opacity-0 shadow-2xl transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 dark:border-yellow-600 dark:from-yellow-900/90 dark:to-amber-900/90">
                 <div className="text-center">
-                  <div className="mb-2 flex items-center justify-center gap-1 text-sm font-bold text-yellow-700 dark:text-yellow-200">
-                    <span>👑</span>
-                    <span>HotDogs NFT XP</span>
-                    <span>👑</span>
-                  </div>
                   <div className="space-y-1 text-xs text-yellow-700 dark:text-yellow-300">
                     <p className="mt-2 font-semibold">HotDogs Portal:</p>
-                    <p>• 10 points per NFT</p>
-                    <p>• Bonus from badges</p>
-                    <p className="mt-1 text-xs text-yellow-600 italic dark:text-yellow-400">
-                      Level up with badges!
-                    </p>
+                    <p>• HotPoints for NFT</p>
+                    <p>• Unique badges</p>
                   </div>
                 </div>
                 <div className="absolute bottom-full left-1/2 h-0 w-0 -translate-x-1/2 transform border-r-6 border-b-6 border-l-6 border-r-transparent border-b-yellow-300 border-l-transparent dark:border-b-yellow-600"></div>
