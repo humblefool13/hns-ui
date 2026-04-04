@@ -21,6 +21,7 @@ export async function GET() {
     }) as any;
 
     const tlds: string[] = [];
+    const tldContracts: Record<string, string> = {};
     let index = 0;
     while (true) {
       try {
@@ -29,6 +30,8 @@ export async function GET() {
         ])) as string;
         if (tld && tld !== "") {
           tlds.push(tld);
+          const tldAddress = (await contract.read.tldContracts([tld])) as string;
+          tldContracts[tld] = tldAddress;
           index++;
         } else {
           break;
@@ -38,7 +41,7 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({ tlds });
+    return NextResponse.json({ tlds, tldContracts });
   } catch (e) {
     return NextResponse.json(
       { error: "Failed to fetch TLDs" },

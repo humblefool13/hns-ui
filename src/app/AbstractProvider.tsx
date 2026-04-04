@@ -9,8 +9,6 @@ export default function AbstractProvider({
   children: React.ReactNode;
 }) {
   return (
-    <AbstractWalletProvider chain={abstractTestnet}>
-      {children}
-    </AbstractWalletProvider>
+    <AbstractWalletProvider chain={abstract}>{children}</AbstractWalletProvider>
   );
 }

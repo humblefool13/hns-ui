@@ -80,6 +80,9 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Stores TLD -> contract address (populated via RPC or wallet path)
+  const [tldAddresses] = useState<Map<string, Address>>(new Map());
+  // Stores TLD -> viem contract instance (rebuilt whenever abstractClient changes)
   const [nameServiceContracts] = useState<Map<string, any>>(new Map());
   const { address, isConnected } = useAccount();
   const { data: abstractClient } = useAbstractClient();
@@ -95,12 +98,24 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
     }) as any;
   }, [abstractClient]);
 
-  // Get or create NameService contract instance for a specific TLD
-  const getNameServiceContract = (tld: string) => {
-    if (nameServiceContracts.has(tld.toLowerCase())) {
-      return nameServiceContracts.get(tld);
+  // Rebuild all nameServiceContracts whenever the client changes
+  useEffect(() => {
+    if (!abstractClient) return;
+    for (const [tld, addr] of tldAddresses.entries()) {
+      nameServiceContracts.set(
+        tld,
+        getContract({
+          address: addr,
+          abi: NameServiceABI,
+          client: abstractClient as any
+        })
+      );
     }
-    return null;
+  }, [abstractClient]);
+
+  // Get NameService contract instance for a specific TLD
+  const getNameServiceContract = (tld: string) => {
+    return nameServiceContracts.get(tld.toLowerCase()) ?? null;
   };
 
   // HNS Manager read functions
@@ -117,19 +132,18 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
           ])) as string;
           if (tld && tld !== "") {
             tlds.push(tld);
-            const address = (await hnsManagerContract.read.tldContracts([
+            const tldAddr = (await hnsManagerContract.read.tldContracts([
               tld
             ])) as Address;
-            if (!nameServiceContracts.has(tld)) {
-              nameServiceContracts.set(
-                tld,
-                getContract({
-                  address: address,
-                  abi: NameServiceABI,
-                  client: abstractClient as any
-                }) as any
-              );
-            }
+            tldAddresses.set(tld, tldAddr);
+            nameServiceContracts.set(
+              tld,
+              getContract({
+                address: tldAddr,
+                abi: NameServiceABI,
+                client: abstractClient as any
+              })
+            );
             index++;
           } else {
             break;
@@ -148,7 +162,23 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
   const getRegisteredTLDsRPC = async (): Promise<string[] | undefined> => {
     const res = await fetch("/api/hns/tlds", { cache: "no-store" });
     if (!res.ok) throw new Error("Failed to fetch TLDs");
-    const data = (await res.json()) as { tlds: string[] };
+    const data = (await res.json()) as { tlds: string[]; tldContracts?: Record<string, string> };
+    if (data.tldContracts) {
+      for (const [tld, addr] of Object.entries(data.tldContracts)) {
+        tldAddresses.set(tld, addr as Address);
+        // Build a proper contract instance if we have a client, otherwise defer to the useEffect
+        if (abstractClient) {
+          nameServiceContracts.set(
+            tld,
+            getContract({
+              address: addr as Address,
+              abi: NameServiceABI,
+              client: abstractClient as any
+            })
+          );
+        }
+      }
+    }
     return data.tlds ?? [];
   };
 
@@ -293,8 +323,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
         throw new Error("Name service contract not initialized for " + tld);
       const price = getDomainPrice(name, years);
       const logs = await contract.write.register([name, BigInt(years)], {
-        value: parseEther(price.toString()),
-        gas: BigInt(76874750)
+        value: parseEther(price.toString())
       });
       return logs as string;
     } catch (err) {
@@ -314,8 +343,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
         throw new Error("Name service contract not initialized for " + tld);
       const price = getDomainPrice(name, years);
       const logs = await contract.write.renew([name, BigInt(years)], {
-        value: parseEther(price.toString()),
-        gas: BigInt(96874750)
+        value: parseEther(price.toString())
       });
       return logs as string;
     } catch (err) {
@@ -333,9 +361,7 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
       const contract = getNameServiceContract(tld);
       if (!contract)
         throw new Error("Name service contract not initialized for " + tld);
-      const logs = await contract.write.transferDomain([name, to], {
-        gas: BigInt(1405000)
-      });
+      const logs = await contract.write.transferDomain([name, to]);
       return logs as string;
     } catch (err) {
       console.error("Error transferring domain:", err);
@@ -344,24 +370,17 @@ export const ContractProvider: React.FC<ContractProviderProps> = ({
   };
 
   const getDomainPrice = (name: string, years: number): number => {
-    try {
-      let ethPrice: number;
-      if (name.length === 3) {
-        ethPrice = 0.012 * years;
-      } else if (name.length === 4) {
-        ethPrice = 0.01 * years;
-      } else if (name.length === 5) {
-        ethPrice = 0.008 * years;
-      } else if (name.length === 6) {
-        ethPrice = 0.006 * years;
-      } else {
-        ethPrice = 0.004 * years;
-      }
-      return ethPrice;
-    } catch (err) {
-      console.error("Error getting domain price:", err);
-      throw err;
+    let basePrice: number;
+    if (name.length === 3) {
+      basePrice = 0.0049;
+    } else if (name.length === 4) {
+      basePrice = 0.0034;
+    } else if (name.length === 5) {
+      basePrice = 0.0024;
+    } else {
+      basePrice = 0.0015;
     }
+    return basePrice * years;
   };
 
   const getDomainExpiration = async (

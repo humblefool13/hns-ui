@@ -49,12 +49,10 @@ export async function POST(request: Request) {
     const sig3 = keccak256(toHex("DomainTransferred(uint256,address,address)"));
     const sig4 = keccak256(toHex("DomainExpired(uint256,address)"));
 
-    const route = "eth_getLogs";
-
     const sigs = [sig1, sig2, sig3, sig4];
 
     const requests = sigs.map((sig) =>
-      fetch(`${rpcUrl}/${route}`, {
+      fetch(rpcUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -74,7 +72,28 @@ export async function POST(request: Request) {
     );
 
     const responses = await Promise.all(requests);
-    const events = responses.flatMap((res) => res.result);
+    const events = responses.flatMap((res) => res.result ?? []);
+
+    // Fetch block timestamps for unique block numbers
+    const blockNumbers = [...new Set(events.map((log: any) => log.blockNumber))];
+    const blockTimestamps = new Map<string, number>();
+    await Promise.all(
+      blockNumbers.map(async (blockNumber) => {
+        const res = await fetch(rpcUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: 1,
+            method: "eth_getBlockByNumber",
+            params: [blockNumber, false]
+          })
+        }).then((r) => r.json());
+        if (res.result?.timestamp) {
+          blockTimestamps.set(blockNumber as string, hexToNumber(res.result.timestamp));
+        }
+      })
+    );
 
     type EventItem = {
       id: string; // transaction hash + log index
@@ -122,7 +141,7 @@ export async function POST(request: Request) {
           txHash: log.transactionHash,
           blockNumber: hexToNumber(log.blockNumber),
           tokenId: args?.tokenId as bigint,
-          timestamp: hexToNumber(log.blockTimestamp),
+          timestamp: blockTimestamps.get(log.blockNumber) ?? 0,
           tld,
           from:
             (args?.from as string) ||
