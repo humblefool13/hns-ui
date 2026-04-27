@@ -4,8 +4,6 @@
 
 This project is a **Next.js** interface for interacting with **HotDog Name Service (HNS)** contracts on the **Abstract** blockchain.
 
-Currently deployed [here](https://hotdogs.humblefool13.dev)
-
 It lets users:
 
 - Search, resolve, and inspect HNS domains (e.g. `sausage.hotdogs`)
@@ -26,8 +24,6 @@ The app is optimized for a smooth, animated UX with light/dark themes and wallet
   - Deep links to:
     - Abscan (or configured explorer)
     - OpenSea
-    - Magic Eden
-    - Mintify
 
 - **Register & Renew**
   - Register available domains for **1–10 years**
